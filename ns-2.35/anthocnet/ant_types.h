@@ -21,18 +21,18 @@ class Packet;
 
 struct ant_node_less_adapter
 {
-	bool operator() (const nsaddr_t lhs, const nsaddr_t rhs)
-	{
-	   return lhs < rhs;
-	}
+    bool operator() (const nsaddr_t lhs, const nsaddr_t rhs)
+    {
+       return lhs < rhs;
+    }
 };
 
 struct ant_dest_less_adapter
 {
-	bool operator() (const nsaddr_t lhs, const nsaddr_t rhs)
-	{
-	   return lhs < rhs;
-	}
+    bool operator() (const nsaddr_t lhs, const nsaddr_t rhs)
+    {
+       return lhs < rhs;
+    }
 };
 
 typedef std::set<nsaddr_t, ant_node_less_adapter> AntNeighbors;
@@ -54,21 +54,21 @@ typedef AntHistoryList::iterator AntHistoryList_it;
 // <neighbor , pheromoneValue> or <destination , pheromoneValue>
 class AntNode {
 private:
-	int node_;
-	double phValue_;
+    int node_;
+    double phValue_;
 
 public:
-	AntNode(nsaddr_t node, double phValue) {
-		this->node_ = node;
-		this->phValue_ = phValue;
-	}
+    AntNode(nsaddr_t node, double phValue) {
+        this->node_ = node;
+        this->phValue_ = phValue;
+    }
 
-	nsaddr_t node() const {
-		return node_;
-	}
-	double phValue() const {
-		return phValue_;
-	}
+    nsaddr_t node() const {
+        return node_;
+    }
+    double phValue() const {
+        return phValue_;
+    }
 };
 typedef std::set<AntNode> AntNodeList;
 typedef AntNodeList::iterator AntNodeList_it;
@@ -86,21 +86,21 @@ typedef AntDestinations::iterator AntDestinations_it;
 // <node, time>
 class AntTimeEntry {
 private:
-	int node_;
-	double time_;
+    int node_;
+    double time_;
 
 public:
-	AntTimeEntry(nsaddr_t node, double time) {
-		this->node_ = node;
-		this->time_ = time;
-	}
+    AntTimeEntry(nsaddr_t node, double time) {
+        this->node_ = node;
+        this->time_ = time;
+    }
 
-	nsaddr_t node() const {
-		return node_;
-	}
-	double time() const {
-		return time_;
-	}
+    nsaddr_t node() const {
+        return node_;
+    }
+    double time() const {
+        return time_;
+    }
 };
 typedef std::vector<AntTimeEntry*> AntTimeEntryList;
 typedef AntTimeEntryList::reverse_iterator AntTimeEntryList_rit;
@@ -117,12 +117,12 @@ typedef MapAntPQueue::iterator MapAntPQueue_it;
  *
  * @author Daniel Henrique Joppi 04/09/2011
  */
-#define ANT_ENTRY(neighbor, destination)	(std::make_pair(neighbor, destination))
-#define ANT_NODE(neighbor, phValue)			(new AntNode(neighbor, phValue))
-#define ANT_TIME_ENTRY(node, time)			(new AntTimeEntry(node, time))
-#define ANT_HISTORY(node, seq_num)			(std::make_pair(node, seq_num))
-#define REMOVE_PACKETS(destination, map)	(map.erase(destination))
-#define GET_PACKETS(destination, map)		(map[destination])
+#define ANT_ENTRY(neighbor, destination)    (std::make_pair(neighbor, destination))
+#define ANT_NODE(neighbor, phValue)         (new AntNode(neighbor, phValue))
+#define ANT_TIME_ENTRY(node, time)          (new AntTimeEntry(node, time))
+#define ANT_HISTORY(node, seq_num)          (std::make_pair(node, seq_num))
+#define REMOVE_PACKETS(destination, map)    (map.erase(destination))
+#define GET_PACKETS(destination, map)       (map[destination])
 
 
 #endif /* _ahn_ant_types_ */

@@ -29,3 +29,6 @@
 
 #Tests
 ns-2.35/tcl/test
+*.nam
+*.tr
+*.txt

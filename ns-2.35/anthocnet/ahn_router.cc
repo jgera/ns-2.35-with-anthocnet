@@ -11,7 +11,6 @@
 #include <typeinfo>
 #include <iostream>
 
-
 int AntBasicPacket::offset_; // to access ant packet header
 /*extern */double r; // reinforcement factor
 /*extern */int N; // number of neighbors of a node

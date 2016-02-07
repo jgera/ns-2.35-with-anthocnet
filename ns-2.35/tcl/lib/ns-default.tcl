@@ -1590,3 +1590,10 @@ Agent/PBC set modulationScheme 0
 
 Agent/MDART set macFailed_ true
 Agent/MDART set etxMetric_ true
+
+# Defaults for Antnet
+Agent/AntHocNet set num_nodes_x_ 4
+Agent/AntHocNet set num_nodes_y_ 4
+Agent/AntHocNet set num_nodes_ 16
+Agent/AntHocNet set r_factor_ 0.001
+Agent/AntHocNet set timer_ant_ 0.03

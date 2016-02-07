@@ -1151,10 +1151,6 @@ if {$aodvonly != -1 } {\n\
 $agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC\n\
 }\n\
 \n\
-set antonly [string first \"AntHocNet\" [$agent info class]]\n\
-if {$antonly != -1 } {\n\
-$agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC\n\
-}\n\
 \n\
 \n\
 if { $port == [Node set rtagent_port_] } {\n\
@@ -20143,6 +20139,12 @@ Agent/PBC set modulationScheme 0\n\
 \n\
 Agent/MDART set macFailed_ true\n\
 Agent/MDART set etxMetric_ true\n\
+\n\
+Agent/AntHocNet set num_nodes_x_ 4\n\
+Agent/AntHocNet set num_nodes_y_ 4\n\
+Agent/AntHocNet set num_nodes_ 16\n\
+Agent/AntHocNet set r_factor_ 0.001\n\
+Agent/AntHocNet set timer_ant_ 0.03\n\
 if [TclObject is-class Network/Pcap/Live] {\n\
 Network/Pcap/Live set snaplen_ 4096;# bpf snap len\n\
 Network/Pcap/Live set promisc_ false;\n\

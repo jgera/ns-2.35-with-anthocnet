@@ -199,10 +199,10 @@ Node/MobileNode instproc add-target { agent port } {
 	}
 
 	# Special processing for AntHocNet
-	set antonly [string first "AntHocNet" [$agent info class]]
-	if {$antonly != -1 } {
-		$agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC
-	}
+	#set antonly [string first "AntHocNet" [$agent info class]]
+	#if {$antonly != -1 } {
+	#	$agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC
+	#}
 
 	#<zheng: add>
 	# Special processing for ZBR

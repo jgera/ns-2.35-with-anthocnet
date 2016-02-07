@@ -59,17 +59,17 @@ $ns_ node-config -adhocRouting $val(rp) \
 		-channel $chan_1_
 
 # Ustawienie wartosci dla AntHocNet
-#Agent/AntHocNet set num_nodes_ 2		# number of nodes in topology				//liczba węzłów w topologii
-#Agent/AntHocNet set num_nodes_x_ 2		# number of nodes in row (for regular mesh topology)	//liczba węzłów w rzędzie (dla stałych topologii mesh)
-#Agent/AntHocNet set num_nodes_y_ 2		# number of nodes in column (for regular mesh topology)	//liczba węzłów w kolumnie (regularne topologii mesh)
-#Agent/AntHocNet set r_factor_ 1		# reinforcement factor					//czynnik wzmocnienia
-#Agent/AntHocNet set timer_ant_ 1		# timer for generation of forward ants			//timer do generowania mrówki do przodu
+#Agent/AntHocNet set num_nodes_ 2       ;# number of nodes in topology				//liczba węzłów w topologii
+#Agent/AntHocNet set num_nodes_x_ 2     ;# number of nodes in row (for regular mesh topology)	//liczba węzłów w rzędzie (dla stałych topologii mesh)
+#Agent/AntHocNet set num_nodes_y_ 2     ;# number of nodes in column (for regular mesh topology)	//liczba węzłów w kolumnie (regularne topologii mesh)
+#Agent/AntHocNet set r_factor_ 1        ;# reinforcement factor					//czynnik wzmocnienia
+#Agent/AntHocNet set timer_ant_ 1       ;# timer for generation of forward ants			//timer do generowania mrówki do przodu
 
 # node_(1) can also be created with the same configuration, or with a different	/ node_(1) moze byc takze tworzony z taka sama konfiguracja, lub z innym
 # channel specified.								/ specyfikacja kanalu
 # Uncomment below two lines will create node_(1) with a different channel.	/ Odkomentuj poniżej dwie linie stworza node_(1) z innegym kanałem.
-#  $ns_ node-config \
-#		 -channel $chan_2_
+# $ns_ node-config \
+# 		 -channel $chan_2_
 
 
 set node_(0) [$ns_ node]
