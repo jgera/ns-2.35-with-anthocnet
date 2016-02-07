@@ -31,6 +31,9 @@ $topo load_flatgrid $val(x) $val(y)
 
 create-god $val(nn)
 
+set chan_1_ [new $val(chan)]
+set chan_2_ [new $val(chan)]
+
 #
 #  Create nn mobilenodes [$val(nn)] and attach them to the channel.
 #
@@ -44,12 +47,12 @@ create-god $val(nn)
 			 -antType $val(ant) \
 			 -propType $val(prop) \
 			 -phyType $val(netif) \
-			 -channelType $val(chan) \
 			 -topoInstance $topo \
 			 -agentTrace ON \
 			 -routerTrace ON \
 			 -macTrace OFF \
-			 -movementTrace ON
+			 -movementTrace ON \
+	         -channel $chan_1_
 
 	for {set i 0} {$i < $val(nn) } { incr i } {
 		set node_($i) [$ns node]
