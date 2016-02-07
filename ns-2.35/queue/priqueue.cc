@@ -35,7 +35,7 @@
 
 /* -*- c++ -*-
    priqueue.cc
-   
+
    A simple priority queue with a remove packet function
    $Id: priqueue.cc,v 1.9 2010/05/09 22:28:41 tom_henderson Exp $
    */
@@ -91,6 +91,7 @@ PriQueue::recv(Packet *p, Handler *h)
                 case PT_TORA:
                 case PT_AODV:
 		case PT_AOMDV:
+		case PT_ANT: //AntHocNet
 		case PT_MDART:
 			recvHighPriority(p, h);
                         break;
@@ -105,7 +106,7 @@ PriQueue::recv(Packet *p, Handler *h)
 }
 
 
-void 
+void
 PriQueue::recvHighPriority(Packet *p, Handler *)
   // insert packet at front of queue
 {
@@ -116,7 +117,7 @@ PriQueue::recvHighPriority(Packet *p, Handler *)
       q_->remove(to_drop);
       drop(to_drop);
     }
-  
+
   if (!blocked_) {
     /*
      * We're not blocked.  Get a packet and send it on.
@@ -129,12 +130,12 @@ PriQueue::recvHighPriority(Packet *p, Handler *)
       blocked_ = 1;
       target_->recv(p, &qh_);
     }
-  } 
+  }
 }
- 
-void 
+
+void
 PriQueue::filter(PacketFilter filter, void * data)
-  // apply filter to each packet in queue, 
+  // apply filter to each packet in queue,
   // - if filter returns 0 leave packet in queue
   // - if filter returns 1 remove packet from queue
 {
@@ -186,10 +187,6 @@ PriQueue::Terminate()
 	while((p = deque())) {
 		drop(p, DROP_END_OF_SIMULATION);
 		//drop(p);
-		
+
 	}
 }
-
-
-
-

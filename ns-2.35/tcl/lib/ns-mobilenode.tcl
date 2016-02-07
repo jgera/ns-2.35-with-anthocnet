@@ -2,7 +2,7 @@
 #
 # Copyright (c) 1998-2000 Regents of the University of California.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
@@ -18,7 +18,7 @@
 # 4. Neither the name of the University nor of the Research Group may be
 #    used to endorse or promote products derived from this software without
 #    specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -54,7 +54,7 @@ ARPTable set delay_             5us
 
 Node/MobileNode instproc init args {
 #  	# I don't care about address classifier; it's not my business
-#  	# All I do is to setup port classifier so we can do broadcast, 
+#  	# All I do is to setup port classifier so we can do broadcast,
 #  	# and to set up interface stuff.
 #  	$self attach-node $node
 #  	$node port-notify $self
@@ -73,8 +73,8 @@ Node/MobileNode instproc init args {
 
 #----------------------------------------------------------------------
 
-# XXX Following are the last remnant of nodetype_. Need to be completely 
-# removed, however, we need a better mechanism to distinguish vanilla 
+# XXX Following are the last remnant of nodetype_. Need to be completely
+# removed, however, we need a better mechanism to distinguish vanilla
 # mobile node from MIP base station, and MIP mobile host.
 
 Node/MobileNode instproc makemip-NewMobile {} {
@@ -93,16 +93,16 @@ Node/MobileNode instproc makemip-NewMIPBS {} {
 	$dmux set mask_ 0x7fffffff
 	$dmux set shift_ 0
 	$self install-demux $dmux
-   
+
 	set regagent_ [new Agent/MIPBS $self]
 	$self attach $regagent_ [Node/MobileNode set REGAGENT_PORT]
-	$self attach-encap 
+	$self attach-encap
 	$self attach-decap
 }
 
 Node/MobileNode instproc attach-encap {} {
-	$self instvar encap_ 
-	
+	$self instvar encap_
+
 	set encap_ [new MIPEncapsulator]
 
 	$encap_ set mask_ [AddrParams NodeMask 1]
@@ -128,7 +128,7 @@ Node/MobileNode instproc attach-decap {} {
 
 Node/MobileNode instproc makemip-NewMIPMH {} {
 	$self instvar regagent_
- 
+
 	set dmux [new Classifier/Port/Reserve]
 	$dmux set mask_ 0x7fffffff
 	$dmux set shift_ 0
@@ -152,12 +152,12 @@ Node/MobileNode instproc reset {} {
 		$mac_($i) reset
 		$ll_($i) reset
 		$ifq_($i) reset
-		if { [info exists opt(imep)] && $opt(imep) == "ON" } { 
-			$imep_($i) reset 
+		if { [info exists opt(imep)] && $opt(imep) == "ON" } {
+			$imep_($i) reset
 		}
 	}
 	if { $arptable_ != "" } {
-		$arptable_ reset 
+		$arptable_ reset
 	}
 }
 
@@ -167,7 +167,7 @@ Node/MobileNode instproc reset {} {
 # if portnumber is 255, default target is set to the routing agent
 #
 Node/MobileNode instproc add-target { agent port } {
-	$self instvar dmux_ imep_ toraDebug_ 
+	$self instvar dmux_ imep_ toraDebug_
 
 	set ns [Simulator instance]
 	set newapi [$ns imep-support]
@@ -175,7 +175,7 @@ Node/MobileNode instproc add-target { agent port } {
 	$agent set sport_ $port
 
 	# special processing for TORA/IMEP node
-	set toraonly [string first "TORA" [$agent info class]] 
+	set toraonly [string first "TORA" [$agent info class]]
 	if {$toraonly != -1 } {
 		$agent if-queue [$self set ifq_(0)]  ;# ifq between LL and MAC
 		#
@@ -185,28 +185,34 @@ Node/MobileNode instproc add-target { agent port } {
 		$agent imep-agent [$self set imep_(0)]
 		[$self set imep_(0)] rtagent $agent
 	}
-	
+
 	# Special processing for AOMDV
-	set aomdvonly [string first "AOMDV" [$agent info class]] 
+	set aomdvonly [string first "AOMDV" [$agent info class]]
 	if {$aomdvonly != -1 } {
 		$agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC
 	}
-	
+
 	# Special processing for AODV
-	set aodvonly [string first "AODV" [$agent info class]] 
+	set aodvonly [string first "AODV" [$agent info class]]
 	if {$aodvonly != -1 } {
 		$agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC
 	}
-	
+
+	# Special processing for AntHocNet
+	set antonly [string first "AntHocNet" [$agent info class]]
+	if {$antonly != -1 } {
+		$agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC
+	}
+
 	#<zheng: add>
 	# Special processing for ZBR
-	#set zbronly [string first "ZBR" [$agent info class]] 
+	#set zbronly [string first "ZBR" [$agent info class]]
 	#if {$zbronly != -1 } {
 	#	$agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC
 	#}
 	#</zheng: add>
 
-	if { $port == [Node set rtagent_port_] } {			
+	if { $port == [Node set rtagent_port_] } {
 		# Ad hoc routing agent setup needs special handling
 		$self add-target-rtagent $agent $port
 		return
@@ -254,7 +260,7 @@ Node/MobileNode instproc add-target { agent port } {
 }
 
 Node/MobileNode instproc add-target-rtagent { agent port } {
-	$self instvar imep_ toraDebug_ 
+	$self instvar imep_ toraDebug_
 
 	set ns [Simulator instance]
 	set newapi [$ns imep-support]
@@ -334,10 +340,10 @@ Node/MobileNode instproc add-target-rtagent { agent port } {
 				$agent target $sndT2
 			}
 			$imep_(0) sendtarget [$self set ll_(0)]
-			
+
 		} else {  ;#  no IMEP
 			$agent target [$self set ll_(0)]
-		}    
+		}
 		#
 		# Recv Target
 		#
@@ -365,7 +371,7 @@ Node/MobileNode instproc add-target-rtagent { agent port } {
 #
 Node/MobileNode instproc add-interface { channel pmodel lltype mactype qtype qlen iftype anttype topo inerrproc outerrproc fecproc } {
 	$self instvar arptable_ nifs_ netif_ mac_ ifq_ ll_ imep_ inerr_ outerr_ fec_
-	
+
 	set ns [Simulator instance]
 	set imepflag [$ns imep-support]
 	set t $nifs_
@@ -392,7 +398,7 @@ Node/MobileNode instproc add-interface { channel pmodel lltype mactype qtype qle
 	}
 
 	set namfp [$ns get-nam-traceall]
-        if {$imepflag == "ON" } {              
+        if {$imepflag == "ON" } {
 		# IMEP layer
 		set imep_($t) [new Agent/IMEP [$self id]]
 		set imep $imep_($t)
@@ -461,20 +467,20 @@ Node/MobileNode instproc add-interface { channel pmodel lltype mactype qtype qle
 	if { $namfp != "" } {
 		$drpT namattach $namfp
 	}
-	if {[$ifq info class] == "Queue/XCP"} {		
+	if {[$ifq info class] == "Queue/XCP"} {
 		$mac set bandwidth_ [$ll set bandwidth_]
 		$mac set delay_ [$ll set delay_]
 		$ifq set-link-capacity [$mac set bandwidth_]
 		$ifq queue-limit $qlen
 		$ifq link $ll
 		$ifq reset
-		
+
 	}
 
 	#
 	# Mac Layer
 	#
-	
+
 	$mac netif $netif
 	$mac up-target $ll
 
@@ -531,11 +537,11 @@ Node/MobileNode instproc add-interface { channel pmodel lltype mactype qtype qle
 	# Physical Channel
 	#
 	$channel addif $netif
-	
+
         # List-based improvement
 	# For nodes talking to multiple channels this should
 	# be called multiple times for each channel
-	$channel add-node $self		
+	$channel add-node $self
 
 	# let topo keep handle of channel
 	$topo channel $channel
@@ -568,7 +574,7 @@ Node/MobileNode instproc add-interface { channel pmodel lltype mactype qtype qle
         if { $namfp != "" } {
             $sndPhyT namattach $namfp
         }
-        
+
 	} else {
 		$netif drop-target [$ns set nullAgent_]
 	}
@@ -733,7 +739,7 @@ Node/MobileNode instproc nodetrace { tracefd } {
 	$T target [[Simulator instance] set nullAgent_]
 	$T attach $tracefd
 	$T set src_ [$self id]
-	$self log-target $T    
+	$self log-target $T
 }
 
 Node/MobileNode instproc agenttrace {tracefd} {
@@ -774,18 +780,18 @@ Node/MobileNode instproc mip-call {ragent} {
 
 Node/MobileNode instproc attach-gafpartner {} {
 
-        $self instvar gafpartner_ address_ ll_ 
+        $self instvar gafpartner_ address_ ll_
 
         set gafpartner_ [new GAFPartner]
 
 	$gafpartner_ set mask_ [AddrParams NodeMask 1]
 	$gafpartner_ set shift_ [AddrParams NodeShift 1]
 	set nodeaddr [AddrParams addr2id [$self node-addr]]
-	
+
 	#$gafpartner_ set addr_ [expr ( ~([AddrParams NodeMask 1] << \
 	#		[AddrParams NodeShift 1]) & $nodeaddr )]
 
-	
+
 	$gafpartner_ set addr_ $nodeaddr
 	$gafpartner_ set port_ 254
 
@@ -797,7 +803,7 @@ Node/MobileNode instproc attach-gafpartner {} {
 
 Node/MobileNode instproc unset-gafpartner {} {
 	$self instvar gafpartner_
-	
+
 	$gafpartner_ set-gafagent 0
 
 }
@@ -857,7 +863,7 @@ SRNodeNew instproc init args {
 	}
 	# set up IP address
 	$self addr $address_
-	
+
 	if { [Simulator set RouterTrace_] == "ON" } {
 		# Recv Target
 		set rcvT [$self mobility-trace Recv "RTR"]
@@ -866,7 +872,7 @@ SRNodeNew instproc init args {
 			$rcvT namattach $namfp
 		}
 		$rcvT target $dsr_agent_
-		set entry_point_ $rcvT	
+		set entry_point_ $rcvT
 	} else {
 		# Recv Target
 		set entry_point_ $dsr_agent_

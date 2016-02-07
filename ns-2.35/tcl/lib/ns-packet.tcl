@@ -4,7 +4,7 @@
 #
 # Copyright (c) 1997 Regents of the University of California.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
@@ -20,7 +20,7 @@
 # 4. Neither the name of the University nor of the Research Group may be
 #    used to endorse or promote products derived from this software without
 #    specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,12 +42,12 @@
 #
 # XXX Packet Header Usage Guide
 #
-# By default, ns includes ALL packet headers of ALL protocols in ns in 
+# By default, ns includes ALL packet headers of ALL protocols in ns in
 # EVERY packet in your simulation. This is a LOT, and will increase as more
 # protocols are added into ns. For "packet-intensive" simulations, this could
 # be a huge overhead.
 #
-# To include only the packet headers that are of interest to you in your 
+# To include only the packet headers that are of interest to you in your
 # specific simulation, follow this pattern (e.g., you want to remove AODV,
 # and ARP headers from your simulation):
 #
@@ -62,10 +62,10 @@
 #
 #   remove-all-packet-headers
 #   add-packet-header AODV ARP
-#   ... 
+#   ...
 #   set ns [new Simulator]
 #
-# IMPORTANT: You MUST never remove common header from your simulation. 
+# IMPORTANT: You MUST never remove common header from your simulation.
 # As you can see, this is also enforced by these header manipulation procs.
 #
 
@@ -83,7 +83,7 @@ proc add-packet-header args {
 proc add-all-packet-headers {} {
 	PacketHeaderManager instvar tab_
 	foreach cl [PacketHeader info subclass] {
-		if [info exists tab_($cl)] { 
+		if [info exists tab_($cl)] {
 			PacketHeaderManager set tab_($cl) 1
 		}
 	}
@@ -103,7 +103,7 @@ proc remove-all-packet-headers {} {
 	PacketHeaderManager instvar tab_
 	foreach cl [PacketHeader info subclass] {
 		if { $cl != "PacketHeader/Common" } {
-			if [info exists tab_($cl)] { 
+			if [info exists tab_($cl)] {
 				PacketHeaderManager unset tab_($cl)
 			}
 		}
@@ -112,11 +112,11 @@ proc remove-all-packet-headers {} {
 
 set protolist {
 # Common:
-	Common 
+	Common
 	Flags
 	IP 	# IP
 # Routing Protocols:
-	NV 	# NixVector classifier for stateless routing 
+	NV 	# NixVector classifier for stateless routing
 	rtProtoDV 	# distance vector routing protocol
 	rtProtoLS 	# link state routing protocol
 	SR 	# source routing, dsr/hdr_sr.cc
@@ -139,7 +139,7 @@ set protolist {
   	SRMEXT 	# SRM, multicast
 # Transport Protocols and related protocols:
 	HttpInval 	# HTTP
-	IVS 	# Inria video conferencing system 
+	IVS 	# Inria video conferencing system
 	QS 	# Quick-Start
 	RAP 	# Rate Adaption Protocol, transport protocol.
 	RTP 	# RTP.  Also used for UPD traffic.
@@ -171,6 +171,7 @@ set protolist {
 	Mac 	# network wireless stack
 # Mobility, Ad-Hoc Networks, Sensor Nets:
 	AODV 	# routing protocol for ad-hoc networks
+	ANT 	# routing protocol for AntHocNet networks
 	Diffusion 	# diffusion/diffusion.cc
 	IMEP 	# Internet MANET Encapsulation Protocol, for ad-hoc networks
         MIP 	# Mobile IP, mobile/mip-reg.cc
@@ -181,7 +182,7 @@ set protolist {
 	AOMDV
 # Other:
 	Encap 	# common/encap.cc
-        IPinIP 	# IP encapsulation 
+        IPinIP 	# IP encapsulation
 	HDLC 	# High Level Data Link Control
 }
 set allhdrs [regsub -all {#.*?\n} $protolist \n]; # strip comments from above
@@ -194,7 +195,7 @@ proc PktHdr_offset { hdrName {field ""} } {
 	if { $field != "" } {
 		# This requires that fields inside the packet header must
 		# be exported via PacketHeaderClass::export_offsets(), which
-		# should use PacketHeaderClass::field_offset() to export 
+		# should use PacketHeaderClass::field_offset() to export
 		# field offsets into otcl space.
 		incr offset [$hdrName set offset_($field)]
 	}
@@ -235,8 +236,8 @@ PacketHeaderManager instproc allochdr cl {
 #  }
 
 # So that not all packet headers should be initialized here.
-# E.g., the link state routing header is initialized using this proc in 
-# ns-rtProtoLS.tcl; because link state may be turned off when STL is not 
+# E.g., the link state routing header is initialized using this proc in
+# ns-rtProtoLS.tcl; because link state may be turned off when STL is not
 # available, this saves us a ns-packet.tcl.in
 #  proc create-packet-header { cl var } {
 #  	PacketHeaderManager set vartab_(PacketHeader/$cl) $var
@@ -258,7 +259,7 @@ PacketHeaderManager instproc allochdr cl {
 #  	{ TORA off_TORA_ }
 #  	{ AODV off_AODV_ }
 #  	{ IMEP off_IMEP_ }
-#  	{ RTP off_rtp_ } 
+#  	{ RTP off_rtp_ }
 #  	{ Message off_msg_ }
 #  	{ IVS off_ivs_ }
 #  	{ rtProtoDV off_DV_ }
@@ -269,7 +270,7 @@ PacketHeaderManager instproc allochdr cl {
 #    	{ SRMEXT off_srm_ext_}
 #  	{ Resv off_resv_}
 #  	{ HttpInval off_inv_}
-#          { IPinIP off_ipinip_} 
+#          { IPinIP off_ipinip_}
 #          { MIP off_mip_}
 #  	{ MFTP off_mftp_ }
 #  	{ Encap off_encap_ }
@@ -279,7 +280,7 @@ PacketHeaderManager instproc allochdr cl {
 #  	{ Ping off_ping_ }
 #  	{ rtProtoLS off_LS_ }
 #  	{ MPLS off_mpls_ }
-#	{ GAF off_gaf_ } 
+#	{ GAF off_gaf_ }
 #  	{ LDP off_ldp_ }
 #  } {
 #  	create-packet-header [lindex $pair 0] [lindex $pair 1]

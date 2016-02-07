@@ -148,6 +148,8 @@ set ptype(dccp_reset) 71\n\
 set pvals(71) DCCP_Reset\n\
 set ptype(mdart) 72\n\
 set pvals(72) MDART\n\
+set ptype(anthocnet) 73\n\
+set pvals(73) AntHocNet\n\
 proc ptype2val {str} {\n\
 global ptype\n\
 set str [string tolower $str]\n\

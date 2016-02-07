@@ -51,8 +51,8 @@ b { return $b }\n\
 kb { return [expr $b*1000] }\n\
 Mb { return [expr $b*1000000] }\n\
 Gb { return [expr $b*1000000000] }\n\
-default { \n\
-puts \"error: bw_parse: unknown unit `$unit'\" \n\
+default {\n\
+puts \"error: bw_parse: unknown unit `$unit'\"\n\
 exit 1\n\
 }\n\
 }\n\
@@ -69,8 +69,8 @@ ms { return [expr $t*1e-3] }\n\
 us { return [expr $t*1e-6] }\n\
 ns { return [expr $t*1e-9] }\n\
 ps { return [expr $t*1e-12] }\n\
-default { \n\
-puts \"error: time_parse: unknown unit `$unit'\" \n\
+default {\n\
+puts \"error: time_parse: unknown unit `$unit'\"\n\
 exit 1\n\
 }\n\
 }\n\
@@ -1064,12 +1064,12 @@ $self install-demux $dmux\n\
 \n\
 set regagent_ [new Agent/MIPBS $self]\n\
 $self attach $regagent_ [Node/MobileNode set REGAGENT_PORT]\n\
-$self attach-encap \n\
+$self attach-encap\n\
 $self attach-decap\n\
 }\n\
 \n\
 Node/MobileNode instproc attach-encap {} {\n\
-$self instvar encap_ \n\
+$self instvar encap_\n\
 \n\
 set encap_ [new MIPEncapsulator]\n\
 \n\
@@ -1117,42 +1117,47 @@ $netif_($i) reset\n\
 $mac_($i) reset\n\
 $ll_($i) reset\n\
 $ifq_($i) reset\n\
-if { [info exists opt(imep)] && $opt(imep) == \"ON\" } { \n\
-$imep_($i) reset \n\
+if { [info exists opt(imep)] && $opt(imep) == \"ON\" } {\n\
+$imep_($i) reset\n\
 }\n\
 }\n\
 if { $arptable_ != \"\" } {\n\
-$arptable_ reset \n\
+$arptable_ reset\n\
 }\n\
 }\n\
 \n\
 Node/MobileNode instproc add-target { agent port } {\n\
-$self instvar dmux_ imep_ toraDebug_ \n\
+$self instvar dmux_ imep_ toraDebug_\n\
 \n\
 set ns [Simulator instance]\n\
 set newapi [$ns imep-support]\n\
 \n\
 $agent set sport_ $port\n\
 \n\
-set toraonly [string first \"TORA\" [$agent info class]] \n\
+set toraonly [string first \"TORA\" [$agent info class]]\n\
 if {$toraonly != -1 } {\n\
 $agent if-queue [$self set ifq_(0)]  ;# ifq between LL and MAC\n\
 $agent imep-agent [$self set imep_(0)]\n\
 [$self set imep_(0)] rtagent $agent\n\
 }\n\
 \n\
-set aomdvonly [string first \"AOMDV\" [$agent info class]] \n\
+set aomdvonly [string first \"AOMDV\" [$agent info class]]\n\
 if {$aomdvonly != -1 } {\n\
 $agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC\n\
 }\n\
 \n\
-set aodvonly [string first \"AODV\" [$agent info class]] \n\
+set aodvonly [string first \"AODV\" [$agent info class]]\n\
 if {$aodvonly != -1 } {\n\
 $agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC\n\
 }\n\
 \n\
+set antonly [string first \"AntHocNet\" [$agent info class]]\n\
+if {$antonly != -1 } {\n\
+$agent if-queue [$self set ifq_(0)]   ;# ifq between LL and MAC\n\
+}\n\
 \n\
-if { $port == [Node set rtagent_port_] } {			\n\
+\n\
+if { $port == [Node set rtagent_port_] } {\n\
 $self add-target-rtagent $agent $port\n\
 return\n\
 }\n\
@@ -1186,7 +1191,7 @@ $dmux_ install $port $agent\n\
 }\n\
 \n\
 Node/MobileNode instproc add-target-rtagent { agent port } {\n\
-$self instvar imep_ toraDebug_ \n\
+$self instvar imep_ toraDebug_\n\
 \n\
 set ns [Simulator instance]\n\
 set newapi [$ns imep-support]\n\
@@ -1251,7 +1256,7 @@ $imep_(0) sendtarget [$self set ll_(0)]\n\
 \n\
 } else {  ;#  no IMEP\n\
 $agent target [$self set ll_(0)]\n\
-}    \n\
+}\n\
 if {$newapi == \"ON\" } {\n\
 [$self set ll_(0)] up-target $imep_(0)\n\
 $classifier_ defaulttarget $agent\n\
@@ -1296,7 +1301,7 @@ set fec_($t) [$fecproc]\n\
 }\n\
 \n\
 set namfp [$ns get-nam-traceall]\n\
-if {$imepflag == \"ON\" } {              \n\
+if {$imepflag == \"ON\" } {\n\
 set imep_($t) [new Agent/IMEP [$self id]]\n\
 set imep $imep_($t)\n\
 set drpT [$self mobility-trace Drop \"RTR\"]\n\
@@ -1351,7 +1356,7 @@ $ifq drop-target $drpT\n\
 if { $namfp != \"\" } {\n\
 $drpT namattach $namfp\n\
 }\n\
-if {[$ifq info class] == \"Queue/XCP\"} {		\n\
+if {[$ifq info class] == \"Queue/XCP\"} {\n\
 $mac set bandwidth_ [$ll set bandwidth_]\n\
 $mac set delay_ [$ll set delay_]\n\
 $ifq set-link-capacity [$mac set bandwidth_]\n\
@@ -1407,7 +1412,7 @@ $netif node $self		;# Bind node <---> interface\n\
 $netif antenna $ant_($t)\n\
 $channel addif $netif\n\
 \n\
-$channel add-node $self		\n\
+$channel add-node $self\n\
 \n\
 $topo channel $channel\n\
 \n\
@@ -1568,7 +1573,7 @@ set T [new Trace/Generic]\n\
 $T target [[Simulator instance] set nullAgent_]\n\
 $T attach $tracefd\n\
 $T set src_ [$self id]\n\
-$self log-target $T    \n\
+$self log-target $T\n\
 }\n\
 \n\
 Node/MobileNode instproc agenttrace {tracefd} {\n\
@@ -1600,7 +1605,7 @@ $regagent_ ragent $ragent\n\
 \n\
 Node/MobileNode instproc attach-gafpartner {} {\n\
 \n\
-$self instvar gafpartner_ address_ ll_ \n\
+$self instvar gafpartner_ address_ ll_\n\
 \n\
 set gafpartner_ [new GAFPartner]\n\
 \n\
@@ -1683,7 +1688,7 @@ if {  $namfp != \"\" } {\n\
 $rcvT namattach $namfp\n\
 }\n\
 $rcvT target $dsr_agent_\n\
-set entry_point_ $rcvT	\n\
+set entry_point_ $rcvT\n\
 } else {\n\
 set entry_point_ $dsr_agent_\n\
 }\n\
@@ -3356,7 +3361,7 @@ PacketHeaderManager set tab_(PacketHeader/$cl) 1\n\
 proc add-all-packet-headers {} {\n\
 PacketHeaderManager instvar tab_\n\
 foreach cl [PacketHeader info subclass] {\n\
-if [info exists tab_($cl)] { \n\
+if [info exists tab_($cl)] {\n\
 PacketHeaderManager set tab_($cl) 1\n\
 }\n\
 }\n\
@@ -3376,7 +3381,7 @@ proc remove-all-packet-headers {} {\n\
 PacketHeaderManager instvar tab_\n\
 foreach cl [PacketHeader info subclass] {\n\
 if { $cl != \"PacketHeader/Common\" } {\n\
-if [info exists tab_($cl)] { \n\
+if [info exists tab_($cl)] {\n\
 PacketHeaderManager unset tab_($cl)\n\
 }\n\
 }\n\
@@ -3384,10 +3389,10 @@ PacketHeaderManager unset tab_($cl)\n\
 }\n\
 \n\
 set protolist {\n\
-Common \n\
+Common\n\
 Flags\n\
 IP 	# IP\n\
-NV 	# NixVector classifier for stateless routing \n\
+NV 	# NixVector classifier for stateless routing\n\
 rtProtoDV 	# distance vector routing protocol\n\
 rtProtoLS 	# link state routing protocol\n\
 SR 	# source routing, dsr/hdr_sr.cc\n\
@@ -3407,7 +3412,7 @@ PGM_NAK # PGM multicast\n\
 SRM 	# SRM, multicast\n\
 SRMEXT 	# SRM, multicast\n\
 HttpInval 	# HTTP\n\
-IVS 	# Inria video conferencing system \n\
+IVS 	# Inria video conferencing system\n\
 QS 	# Quick-Start\n\
 RAP 	# Rate Adaption Protocol, transport protocol.\n\
 RTP 	# RTP.  Also used for UPD traffic.\n\
@@ -3436,6 +3441,7 @@ LL 	# network wireless stack\n\
 LRWPAN  # zheng, wpan/p802_15_4mac.cc\n\
 Mac 	# network wireless stack\n\
 AODV 	# routing protocol for ad-hoc networks\n\
+ANT 	# routing protocol for AntHocNet networks\n\
 Diffusion 	# diffusion/diffusion.cc\n\
 IMEP 	# Internet MANET Encapsulation Protocol, for ad-hoc networks\n\
 MIP 	# Mobile IP, mobile/mip-reg.cc\n\
@@ -3444,7 +3450,7 @@ TORA 	# routing protocol for ad-hoc networks\n\
 MDART 	# routing protocol for ad-hoc networks\n\
 AOMDV\n\
 Encap 	# common/encap.cc\n\
-IPinIP 	# IP encapsulation \n\
+IPinIP 	# IP encapsulation\n\
 HDLC 	# High Level Data Link Control\n\
 }\n\
 set allhdrs [regsub -all {#.*?\\n} $protolist \\n]; # strip comments from above\n\
@@ -4197,7 +4203,7 @@ eval $self next $args\n\
 Agent instproc init {} {\n\
 }\n\
 \n\
-Agent instproc nodeid {} { \n\
+Agent instproc nodeid {} {\n\
 [$self set node_] id\n\
 }\n\
 \n\
@@ -4266,7 +4272,7 @@ $ns create-eventtrace Event $self\n\
 Agent/TORA instproc init args {\n\
 \n\
 $self next $args\n\
-}       \n\
+}\n\
 \n\
 Agent/TORA set sport_	0\n\
 Agent/TORA set dport_	0\n\
@@ -4278,6 +4284,14 @@ $self next $args\n\
 \n\
 Agent/AODV set sport_   0\n\
 Agent/AODV set dport_   0\n\
+\n\
+Agent/AntHocNet instproc init args {\n\
+\n\
+$self next $args\n\
+}\n\
+\n\
+Agent/AntHocNet set sport_   0\n\
+Agent/AntHocNet set dport_   0\n\
 \n\
 Agent/AOMDV set sport_   0\n\
 Agent/AOMDV set dport_   0\n\
@@ -20854,7 +20868,7 @@ $self instvar nsflows_\n\
 set slinks_(0:0) 0\n\
 set nconn_ 0\n\
 set conn_ \"\"\n\
-set sflows_ \"\" \n\
+set sflows_ \"\"\n\
 set nsflows_ 0\n\
 set useasim_ 0\n\
 \n\
@@ -20945,7 +20959,7 @@ Simulator instproc rtAgentFunction {val} {$self set rtAgentFunction_ $val}\n\
 Simulator instproc eotTrace  {val} { $self set eotTrace_  $val }\n\
 Simulator instproc diffusionFilter {val} {$self set diffFilter_ $val}\n\
 \n\
-Simulator instproc MPLS { val } { \n\
+Simulator instproc MPLS { val } {\n\
 if { $val == \"ON\" } {\n\
 Node enable-module \"MPLS\"\n\
 } else {\n\
@@ -20954,7 +20968,7 @@ Node disable-module \"MPLS\"\n\
 }\n\
 \n\
 \n\
-Simulator instproc PGM { val } { \n\
+Simulator instproc PGM { val } {\n\
 if { $val == \"ON\" } {\n\
 Node enable-module \"PGM\"\n\
 } else {\n\
@@ -20970,7 +20984,7 @@ Node disable-module \"LMS\"\n\
 }\n\
 \n\
 Simulator instproc get-nodetype {} {\n\
-$self instvar addressType_ routingAgent_ wiredRouting_ \n\
+$self instvar addressType_ routingAgent_ wiredRouting_\n\
 set val \"\"\n\
 \n\
 if { [info exists addressType_] && $addressType_ == \"hierarchical\" } {\n\
@@ -21038,7 +21052,7 @@ Simulator set propInstCreated_ 1\n\
 }\n\
 }\n\
 \n\
-if {[info exists channelType_] && [info exists channel_]} { \n\
+if {[info exists channelType_] && [info exists channel_]} {\n\
 error \"Can't specify both channel and channelType, error!\"\n\
 } elseif {[info exists channelType_] && ![info exists satNodeType_]} {\n\
 warn \"Please use -channel as shown in tcl/ex/wireless-mitf.tcl\"\n\
@@ -21052,7 +21066,7 @@ if [info exists topoInstance_] {\n\
 $propInstance_  topography $topoInstance_\n\
 }\n\
 if {[string compare $addressType_ \"\"] != 0} {\n\
-$self set-address-format $addressType_ \n\
+$self set-address-format $addressType_\n\
 }\n\
 if { [info exists mobileIP_] && $mobileIP_ == \"ON\"} {\n\
 Simulator set mobile_ip_  1\n\
@@ -21092,7 +21106,7 @@ if { [info exists routingAgent_] && ($routingAgent_ != \"\") } {\n\
 set node [eval $self create-wireless-node $args]\n\
 if {[info exists wiredRouting_] && $wiredRouting_ == \"ON\"} {\n\
 set Node_([$node id]) $node\n\
-$self add-node $node [$node id] \n\
+$self add-node $node [$node id]\n\
 }\n\
 return $node\n\
 }\n\
@@ -21101,7 +21115,7 @@ return $node\n\
 set node [eval new [Simulator set node_factory_] $args]\n\
 set Node_([$node id]) $node\n\
 \n\
-$self add-node $node [$node id] \n\
+$self add-node $node [$node id]\n\
 \n\
 $node nodeid [$node id]\n\
 \n\
@@ -21140,6 +21154,9 @@ $self at 0.0 \"$node start-dsr\"\n\
 }\n\
 AODV {\n\
 set ragent [$self create-aodv-agent $node]\n\
+}\n\
+AntHocNet {\n\
+set ragent [$self create-ant-agent $node]\n\
 }\n\
 AOMDV {\n\
 set ragent [$self create-aomdv-agent $node]\n\
@@ -21268,7 +21285,7 @@ $node setPtransition $transitionPower_\n\
 }\n\
 if [info exists transitionTime_] {\n\
 $node setTtransition $transitionTime_\n\
-}	\n\
+}\n\
 $node topography $topoInstance_\n\
 \n\
 return $node\n\
@@ -21285,11 +21302,11 @@ return [eval new $nodeclass $args]\n\
 }\n\
 \n\
 Simulator instproc set-dsr-nodetype {} {\n\
-$self instvar wiredRouting_ \n\
+$self instvar wiredRouting_\n\
 set nodetype SRNodeNew\n\
 if [Simulator set mobile_ip_] {\n\
 set nodetype SRNodeNew/MIPMH\n\
-} \n\
+}\n\
 if { [info exists wiredRouting_] && $wiredRouting_ == \"ON\"} {\n\
 set nodetype Node/MobileNode/BaseStationNode\n\
 }\n\
@@ -21343,6 +21360,13 @@ $node set ragent_ $ragent\n\
 return $ragent\n\
 }\n\
 \n\
+Simulator instproc create-ant-agent { node } {\n\
+set ragent [new Agent/AntHocNet [$node node-addr]]\n\
+$self at 0.0 \"$ragent start\"     ;# start BEACON/HELLO Messages\n\
+$node set ragent_ $ragent\n\
+return $ragent\n\
+}\n\
+\n\
 Simulator instproc create-aomdv-agent { node } {\n\
 set ragent [new Agent/AOMDV [$node node-addr]]\n\
 $self at 0.0 \"$ragent start\"\n\
@@ -21366,7 +21390,7 @@ return $ragent\n\
 \n\
 Simulator instproc use-newtrace {} {\n\
 Simulator set WirelessNewTrace_ 1\n\
-} \n\
+}\n\
 \n\
 Simulator instproc use-taggedtrace { {tag ON} } {\n\
 Simulator set TaggedTrace_ $tag\n\
@@ -21412,9 +21436,9 @@ if [info exists domain_num_] {\n\
 if {[expr $domain_num_ - 1]> [AddrParams NodeMask 1]} {\n\
 error \"\\# of domains exceed dom-field-size \"\n\
 }\n\
-} \n\
+}\n\
 if [info exists cluster_num_] {\n\
-set maxval [expr [find-max $cluster_num_] - 1] \n\
+set maxval [expr [find-max $cluster_num_] - 1]\n\
 if {$maxval > [expr pow(2, [AddrParams NodeMask 2])]} {\n\
 error \"\\# of clusters exceed clus-field-size \"\n\
 }\n\
@@ -21443,7 +21467,7 @@ $self check-smac                      ;# print warning if in sleep/wakeup cycle\
 $self check-node-num\n\
 $self rtmodel-configure			;# in case there are any\n\
 [$self get-routelogic] configure\n\
-$self instvar scheduler_ Node_ link_ started_ \n\
+$self instvar scheduler_ Node_ link_ started_\n\
 \n\
 set started_ 1\n\
 \n\
@@ -21561,11 +21585,11 @@ set pushback 0\n\
 }\n\
 $n1 add-neighbor $n2 $pushback\n\
 \n\
-if {[string first \"RED\" $qtype] != -1 || \n\
-[string first \"PI\" $qtype] != -1 || \n\
+if {[string first \"RED\" $qtype] != -1 ||\n\
+[string first \"PI\" $qtype] != -1 ||\n\
 [string first \"Vq\" $qtype] != -1 ||\n\
-[string first \"REM\" $qtype] != -1 ||  \n\
-[string first \"GK\" $qtype] != -1 ||  \n\
+[string first \"REM\" $qtype] != -1 ||\n\
+[string first \"GK\" $qtype] != -1 ||\n\
 [string first \"RIO\" $qtype] != -1 ||\n\
 [string first \"XCP\" $qtype] != -1} {\n\
 $q link [$link_($sid:$did) set link_]\n\
@@ -21639,7 +21663,7 @@ set type DropTail\n\
 if [info exists link_($coreId:$ifId)] {\n\
 $self remove-nam-linkconfig $coreId $ifId\n\
 }\n\
-eval $self simplex-link $core $if $bw $delay $type \n\
+eval $self simplex-link $core $if $bw $delay $type\n\
 if { [Simulator set nix-routing] } {\n\
 $n1 set-neighbor [$core id]\n\
 $n2 set-neighbor [$if id]\n\
@@ -21751,9 +21775,9 @@ set eventtraceAllFile_ $traceAllFile_\n\
 \n\
 Simulator instproc initial_node_pos {nodep size} {\n\
 $self instvar addressType_\n\
-$self instvar energyModel_ \n\
+$self instvar energyModel_\n\
 \n\
-if [info exists energyModel_] {  \n\
+if [info exists energyModel_] {\n\
 set nodeColor \"green\"\n\
 } else {\n\
 set nodeColor \"black\"\n\
@@ -21762,7 +21786,7 @@ if { [info exists addressType_] && $addressType_ == \"hierarchical\" } {\n\
 $self puts-nam-config \"n -t * -a [$nodep set address_] \\\n\
 -s [$nodep id] -x [$nodep set X_] -y [$nodep set Y_] -Z [$nodep set Z_] \\\n\
 -z $size -v circle -c $nodeColor\"\n\
-} else { \n\
+} else {\n\
 $self puts-nam-config \"n -t * -s [$nodep id] \\\n\
 -x [$nodep set X_] -y [$nodep set Y_] -Z [$nodep set Z_] -z $size \\\n\
 -v circle -c $nodeColor\"\n\
@@ -21856,14 +21880,14 @@ $p set dst_ $dst\n\
 }\n\
 lappend alltrace_ $p\n\
 if {$file != \"\"} {\n\
-$p ${op}attach $file		\n\
+$p ${op}attach $file\n\
 }\n\
 return $p\n\
 }\n\
 \n\
 \n\
 Simulator instproc create-eventtrace {type owner } {\n\
-$self instvar alltrace_ \n\
+$self instvar alltrace_\n\
 $self instvar eventTraceAll_ eventtraceAllFile_ namtraceAllFile_\n\
 \n\
 if ![info exists eventTraceAll_] return\n\
@@ -21976,11 +22000,11 @@ Simulator instproc detach-agent { node agent } {\n\
 $self instvar conn_ nconn_ sflows_ nsflows_ useasim_\n\
 \n\
 if {$useasim_ == 1} {\n\
-set list \"\" \n\
+set list \"\"\n\
 set s [$node id]\n\
 set d [[$self get-node-by-addr [$agent set dst_addr_]] id]\n\
 foreach x $conn_ {\n\
-set t [split $x \":\"] \n\
+set t [split $x \":\"]\n\
 if {[string compare [lindex $t 0]:[lindex $t 1] $s:$d] != 0} {\n\
 lappend list_ $x\n\
 }\n\
@@ -22016,7 +22040,7 @@ set did [$n2 id]\n\
 if [info exists link_($sid:$did)] {\n\
 set d [$link_($sid:$did) link]\n\
 $d set bandwidth_ $bandwidth\n\
-} \n\
+}\n\
 if {$type == \"duplex\"} {\n\
 if [info exists link_($did:$sid)] {\n\
 set d [$link_($did:$sid) link]\n\
@@ -22082,7 +22106,7 @@ $src add-multihome-destination \\\n\
 }\n\
 \n\
 Simulator instproc simplex-connect { src dst } {\n\
-$src set dst_addr_ [$dst set agent_addr_] \n\
+$src set dst_addr_ [$dst set agent_addr_]\n\
 $src set dst_port_ [$dst set agent_port_]\n\
 \n\
 \n\
@@ -22192,7 +22216,7 @@ $self attach-agent $dest $d_agent\n\
 $self connect $s_agent $d_agent\n\
 \n\
 return [list $s_agent $d_agent]\n\
-}   \n\
+}\n\
 \n\
 Simulator instproc create-connection-listen {s_type source d_type dest pktClass} {\n\
 set s_agent [new Agent/$s_type]\n\
@@ -22204,8 +22228,8 @@ $self attach-agent $dest $d_agent\n\
 $self connect $s_agent $d_agent\n\
 $d_agent listen\n\
 \n\
-return $s_agent \n\
-}   \n\
+return $s_agent\n\
+}\n\
 \n\
 Simulator instproc create-tcp-connection {s_type source d_type dest pktClass} {\n\
 set s_agent [new Agent/$s_type]\n\
@@ -22291,7 +22315,7 @@ $cl proc unknown-flow { src dst fid }  {\n\
 set fdesc [new QueueMonitor/ED/Flow]\n\
 set dsamp [new Samples]\n\
 $fdesc set-delay-samples $dsamp\n\
-set slot [$self installNext $fdesc] \n\
+set slot [$self installNext $fdesc]\n\
 $self set-hash auto $src $dst $fid $slot\n\
 }\n\
 \n\
@@ -22336,7 +22360,7 @@ set dsamp [new Samples]\n\
 $fdesc set-delay-samples $dsamp\n\
 $fdesc set target_rate_ $rate\n\
 $fdesc set bucket_depth_ $depth\n\
-$fdesc set tbucket_ $init  \n\
+$fdesc set tbucket_ $init\n\
 set slot [$self installNext $fdesc]\n\
 $self set-hash $hashbucket $src $dst $fid $slot\n\
 }\n\
@@ -22405,7 +22429,7 @@ return $delay\n\
 }\n\
 \n\
 Simulator instproc abstract-tcp {} {\n\
-$self instvar TahoeAckfsm_ RenoAckfsm_ TahoeDelAckfsm_ RenoDelAckfsm_ dropper_ \n\
+$self instvar TahoeAckfsm_ RenoAckfsm_ TahoeDelAckfsm_ RenoDelAckfsm_ dropper_\n\
 $self set TahoeAckfsm_ [new FSM/TahoeAck]\n\
 $self set RenoAckfsm_ [new FSM/RenoAck]\n\
 $self set TahoeDelAckfsm_ [new FSM/TahoeDelAck]\n\
@@ -22429,7 +22453,7 @@ $diff enable-pos\n\
 } else {\n\
 $diff disable-pos\n\
 }\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(enableNeg)] {\n\
 if {$opt(enableNeg) == \"true\"} {\n\
@@ -22437,7 +22461,7 @@ $diff enable-neg\n\
 } else {\n\
 $diff disable-neg\n\
 }\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(suppression)] {\n\
 if {$opt(suppression) == \"true\"} {\n\
@@ -22445,35 +22469,35 @@ $diff enable-suppression\n\
 } else {\n\
 $diff disable-suppression\n\
 }\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(subTxType)] {\n\
 $diff set-sub-tx-type $opt(subTxType)\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(orgTxType)] {\n\
 $diff set-org-tx-type $opt(orgTxType)\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(posType)] {\n\
 $diff set-pos-type $opt(posType)\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(posNodeType)] {\n\
 $diff set-pos-node-type $opt(posNodeType)\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(negWinType)] {\n\
 $diff set-neg-win-type $opt(negWinType)\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(negThrType)] {\n\
 $diff set-neg-thr-type $opt(negThrType)\n\
-} \n\
+}\n\
 \n\
 if [info exist opt(negMaxType)] {\n\
 $diff set-neg-max-type $opt(negMaxType)\n\
-} \n\
+}\n\
 \n\
 $self put-in-list $diff\n\
 $self at 0.0 \"$diff start\"\n\
@@ -22496,14 +22520,14 @@ $diff enable-pos\n\
 } else {\n\
 $diff disable-pos\n\
 }\n\
-} \n\
+}\n\
 if [info exist opt(enableNeg)] {\n\
 if {$opt(enableNeg) == \"true\"} {\n\
 $diff enable-neg\n\
 } else {\n\
 $diff disable-neg\n\
 }\n\
-} \n\
+}\n\
 \n\
 $self put-in-list $diff\n\
 $self at 0.0 \"$diff start\"\n\
@@ -22571,7 +22595,6 @@ foreach i $lagent {\n\
 $i stop\n\
 }\n\
 }\n\
-\n\
 \n\
 Simulator instproc attach-diffapp { node diffapp } {\n\
 $diffapp dr [$node get-dr]\n\

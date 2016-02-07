@@ -74,11 +74,11 @@
 
 /*
  * modified ns-2.33, adding support for dynamic libraries
- * 
+ *
  * packet_t is changed from enum to unsigned int in order to allow
  * dynamic definition of  new packet types within dynamic libraries.
  * Pre-defined packet types are implemented as static const.
- * 
+ *
  */
 
 typedef unsigned int packet_t;
@@ -129,34 +129,34 @@ static const packet_t PT_TORA = 36;
 static const packet_t PT_DSR = 37;
 static const packet_t PT_AODV = 38;
 static const packet_t PT_IMEP = 39;
-        
+
         // RAP packets
 static const packet_t PT_RAP_DATA = 40;
 static const packet_t PT_RAP_ACK = 41;
-  
+
 static const packet_t PT_TFRC = 42;
 static const packet_t PT_TFRC_ACK = 43;
 static const packet_t PT_PING = 44;
-        
+
 static const packet_t PT_PBC = 45;
         // Diffusion packets - Chalermek
 static const packet_t PT_DIFF = 46;
-        
+
         // LinkState routing update packets
 static const packet_t PT_RTPROTO_LS = 47;
-        
+
         // MPLS LDP header
 static const packet_t PT_LDP = 48;
-        
+
         // GAF packet
 static const packet_t PT_GAF = 49;
-        
+
         // ReadAudio traffic
 static const packet_t PT_REALAUDIO = 50;
-        
+
         // Pushback Messages
 static const packet_t PT_PUSHBACK = 51;
-  
+
   #ifdef HAVE_STL
         // Pragmatic General Multicast
 static const packet_t PT_PGM = 52;
@@ -198,9 +198,12 @@ static const packet_t PT_DCCP_RESET = 71;
 
         // M-DART packets
 static const packet_t PT_MDART = 72;
-	
+
+        //AntHocNet
+static const packet_t PT_ANT = 73;
+
         // insert new packet types here
-static packet_t       PT_NTYPE = 73; // This MUST be the LAST one
+static packet_t       PT_NTYPE = 74; // This MUST be the LAST one
 
 enum packetClass
 {
@@ -212,11 +215,11 @@ enum packetClass
 
 /*
  * ns-2.33 adding support for dynamic libraries
- * 
+ *
  * The PacketClassifier class is needed to make
  * p_info::data_packet(packet_t) work also with dynamically defined
  * packet types.
- * 
+ *
  */
 class PacketClassifier
 {
@@ -225,7 +228,7 @@ class PacketClassifier
 		virtual ~PacketClassifier() {}
 		void setNext(PacketClassifier *next){next_ = next;}
 		PacketClassifier *getNext(){return next_;}
-		packetClass classify(packet_t type) 
+		packetClass classify(packet_t type)
 		{
 		        packetClass c = getClass(type);
 		        if(c == UNCLASSIFIED && next_)
@@ -235,7 +238,7 @@ class PacketClassifier
 
 	protected:
 		//return 0 if the packet is unknown
-		virtual packetClass getClass(packet_t type) = 0;        
+		virtual packetClass getClass(packet_t type) = 0;
 		PacketClassifier *next_;
 };
 
@@ -245,7 +248,7 @@ public:
 	{
 		initName();
 	}
-	const char* name(packet_t p) const { 
+	const char* name(packet_t p) const {
 		if ( p <= p_info::nPkt_ ) return name_[p];
 		return 0;
 	}
@@ -261,22 +264,23 @@ public:
 		         (type) == PT_HDLC \
 		        );
 	}
-	static packetClass classify(packet_t type) {		
-		if (type == PT_DSR || 
-		    type == PT_MESSAGE || 
+	static packetClass classify(packet_t type) {
+		if (type == PT_DSR ||
+		    type == PT_MESSAGE ||
 		    type == PT_TORA ||
 		    type == PT_PUMA ||
 		    type == PT_AODV ||
+		    type == PT_ANT || //AntHocNet
 		    type == PT_MDART)
-			return ROUTING;		
-		if (type == PT_TCP || 
-		    type == PT_TELNET || 
-		    type == PT_CBR || 
-		    type == PT_AUDIO || 
-		    type == PT_VIDEO || 
-		    type == PT_ACK || 
-		    type == PT_SCTP || 
-		    type == PT_SCTP_APP1 || 
+			return ROUTING;
+		if (type == PT_TCP ||
+		    type == PT_TELNET ||
+		    type == PT_CBR ||
+		    type == PT_AUDIO ||
+		    type == PT_VIDEO ||
+		    type == PT_ACK ||
+		    type == PT_SCTP ||
+		    type == PT_SCTP_APP1 ||
 		    type == PT_HDLC)
 			return DATApkt;
 		if (pc_)
@@ -289,7 +293,7 @@ public:
 		        return;
 		pc->setNext(pc_);
 		pc_ = pc;
-	}       
+	}
 	static void initName()
 	{
 		if(nPkt_ >= PT_NTYPE+1)
@@ -303,7 +307,7 @@ public:
 		        delete [] name_;
 		name_ = nameNew;
 		nPkt_ = PT_NTYPE+1;
-		
+
 
 		name_[PT_TCP]= "tcp";
 		name_[PT_UDP]= "udp";
@@ -325,14 +329,14 @@ public:
 		name_[PT_CtrMcast_Encap]= "CtrMcast_Encap";
 		name_[PT_CtrMcast_Decap]= "CtrMcast_Decap";
 		name_[PT_SRM]= "SRM";
-	
-		name_[PT_REQUEST]= "sa_req";	
+
+		name_[PT_REQUEST]= "sa_req";
 		name_[PT_ACCEPT]= "sa_accept";
 		name_[PT_CONFIRM]= "sa_conf";
 		name_[PT_TEARDOWN]= "sa_teardown";
-		name_[PT_LIVE]= "live"; 
+		name_[PT_LIVE]= "live";
 		name_[PT_REJECT]= "sa_reject";
-	
+
 		name_[PT_TELNET]= "telnet";
 		name_[PT_FTP]= "ftp";
 		name_[PT_PARETO]= "pareto";
@@ -355,7 +359,7 @@ public:
  		name_[PT_TFRC]= "tcpFriend";
 		name_[PT_TFRC_ACK]= "tcpFriendCtl";
 		name_[PT_PING]="ping";
-	
+
 		name_[PT_PBC] = "PBC";
 
 	 	/* For diffusion : Chalermek */
@@ -368,12 +372,12 @@ public:
 		name_[PT_LDP] = "LDP";
 
 		// for GAF
-                name_[PT_GAF] = "gaf";      
+                name_[PT_GAF] = "gaf";
 
 		// RealAudio packets
 		name_[PT_REALAUDIO] = "ra";
 
-		//pushback 
+		//pushback
 		name_[PT_PUSHBACK] = "pushback";
 
 #ifdef HAVE_STL
@@ -387,7 +391,7 @@ public:
 
 		name_[PT_SCTP]= "sctp";
  		name_[PT_SCTP_APP1] = "sctp_app1";
-		
+
 		// smac
 		name_[PT_SMAC]="smac";
 
@@ -399,12 +403,15 @@ public:
 
 		// Bell Labs (PackMime OL)
 		name_[PT_BLTRACE]="BellLabsTrace";
-		
+
 		// AOMDV patch
 		name_[PT_AOMDV]= "AOMDV";
 
 		// PUMA
 		name_[PT_PUMA]="PUMA";
+
+		// AntHocNet patch
+		name_[PT_ANT]= "AntHocNet";
 
 		// DCCP
 		name_[PT_DCCP]="DCCP";
@@ -468,9 +475,9 @@ public:
 		} else
 			data_ = NULL;
 	}
-	virtual ~PacketData() { 
-		if (data_ != NULL) 
-			delete []data_; 
+	virtual ~PacketData() {
+		if (data_ != NULL)
+			delete []data_;
 	}
 	unsigned char* data() { return data_; }
 
@@ -490,7 +497,7 @@ private:
 //	unsigned char* data_;	// variable size buffer for 'data'
 //  	unsigned int datalen_;	// length of variable size buffer
 	AppData* data_;		// variable size buffer for 'data'
-	static void init(Packet*);     // initialize pkt hdr 
+	static void init(Packet*);     // initialize pkt hdr
 	bool fflag_;
 protected:
 	static Packet* free_;	// packet free list
@@ -517,21 +524,21 @@ public:
 	}
 	// This is used for backward compatibility, i.e., assuming user data
 	// is PacketData and return its pointer.
-	inline unsigned char* accessdata() const { 
+	inline unsigned char* accessdata() const {
 		if (data_ == 0)
 			return 0;
 		assert(data_->type() == PACKET_DATA);
-		return (((PacketData*)data_)->data()); 
+		return (((PacketData*)data_)->data());
 	}
-	// This is used to access application-specific data, not limited 
+	// This is used to access application-specific data, not limited
 	// to PacketData.
 	inline AppData* userdata() const {
 		return data_;
 	}
-	inline void setdata(AppData* d) { 
+	inline void setdata(AppData* d) {
 		if (data_ != NULL)
 			delete data_;
-		data_ = d; 
+		data_ = d;
 	}
 	inline int datalen() const { return data_ ? data_->size() : 0; }
 
@@ -542,7 +549,7 @@ public:
 	// the pkt stamp carries all info about how/where the pkt
         // was sent needed for a receiver to determine if it correctly
         // receives the pkt
-        PacketStamp	txinfo_;  
+        PacketStamp	txinfo_;
 
 	/*
          * According to cmu code:
@@ -550,38 +557,38 @@ public:
          * and is cleared by the link layer.  It is an ugly hack, but
          * there's really no other way because NS always calls
          * the recv() function of an object.
-	 * 
+	 *
          */
         u_int8_t        incoming;
 
 	//monarch extns end;
 };
 
-/* 
- * static constant associations between interface special (negative) 
+/*
+ * static constant associations between interface special (negative)
  * values and their c-string representations that are used from tcl
  */
 class iface_literal {
 public:
-	enum iface_constant { 
-		UNKN_IFACE= -1, /* 
-				 * iface value for locally originated packets 
+	enum iface_constant {
+		UNKN_IFACE= -1, /*
+				 * iface value for locally originated packets
 				 */
-		ANY_IFACE= -2   /* 
-				 * hashnode with iif == ANY_IFACE_   
+		ANY_IFACE= -2   /*
+				 * hashnode with iif == ANY_IFACE_
 				 * matches any pkt iface (imported from TCL);
-				 * this value should be different from 
+				 * this value should be different from
 				 * hdr_cmn::UNKN_IFACE (packet.h)
-				 */ 
+				 */
 	};
-	iface_literal(const iface_constant i, const char * const n) : 
+	iface_literal(const iface_constant i, const char * const n) :
 		value_(i), name_(n) {}
 	inline int value() const { return value_; }
 	inline const char * name() const { return name_; }
 private:
 	const iface_constant value_;
 	/* strings used in TCL to access those special values */
-	const char * const name_; 
+	const char * const name_;
 };
 
 static const iface_literal UNKN_IFACE(iface_literal::UNKN_IFACE, "?");
@@ -607,22 +614,22 @@ struct hdr_cmn {
 	double	ts_;		// timestamp: for q-delay measurement
 	int	iface_;		// receiving interface (label)
 	dir_t	direction_;	// direction: 0=none, 1=up, -1=down
-	// source routing 
+	// source routing
         char src_rt_valid;
-	double ts_arr_; // Required by Marker of JOBS 
+	double ts_arr_; // Required by Marker of JOBS
 
 	//Monarch extn begins
 	nsaddr_t prev_hop_;     // IP addr of forwarding hop
 	nsaddr_t next_hop_;	// next hop for this packet
 	int      addr_type_;    // type of next_hop_ addr
 	nsaddr_t last_hop_;     // for tracing on multi-user channels
-	
+
 	// AOMDV patch
 	int aomdv_salvage_count_;
-	
+
         // called if pkt can't obtain media or isn't ack'd. not called if
         // droped by a queue
-        FailureCallback xmit_failure_; 
+        FailureCallback xmit_failure_;
         void *xmit_failure_data_;
 
         /*
@@ -648,7 +655,7 @@ struct hdr_cmn {
 	inline static hdr_cmn* access(const Packet* p) {
 		return (hdr_cmn*) p->access(offset_);
 	}
-	
+
         /* per-field member functions */
 	inline packet_t& ptype() { return (ptype_); }
 	inline int& size() { return (size_); }
@@ -712,15 +719,15 @@ inline Packet* Packet::alloc()
 	(HDR_CMN(p))->last_hop_ = -2; // -1 reserved for IP_BROADCAST
 	p->fflag_ = TRUE;
 	(HDR_CMN(p))->direction() = hdr_cmn::DOWN;
-	/* setting all direction of pkts to be downward as default; 
+	/* setting all direction of pkts to be downward as default;
 	   until channel changes it to +1 (upward) */
 	p->next_ = 0;
 	return (p);
 }
 
-/* 
- * Allocate an n byte data buffer to an existing packet 
- * 
+/*
+ * Allocate an n byte data buffer to an existing packet
+ *
  * To set application-specific AppData, use Packet::setdata()
  */
 inline void Packet::allocdata(int n)
@@ -735,7 +742,7 @@ inline void Packet::allocdata(int n)
 inline Packet* Packet::alloc(int n)
 {
 	Packet* p = alloc();
-	if (n > 0) 
+	if (n > 0)
 		p->allocdata(n);
 	return (p);
 }
@@ -747,7 +754,7 @@ inline void Packet::free(Packet* p)
         hdr_dccp *dccph;
 	if (p->fflag_) {
 		if (p->ref_count_ == 0) {
- 
+
                         //free DCCP options on dropped packets
                         switch (HDR_CMN(p)->ptype_){
                         case PT_DCCP:
@@ -793,7 +800,7 @@ inline Packet* Packet::copy() const
         hdr_dccp *dccph, *dccph_p;
 	Packet* p = alloc();
 	memcpy(p->bits(), bits_, hdrlen_);
- 
+
         //copy DCCP options_, since it is a pointer
         switch (HDR_CMN(this)->ptype_){
         case PT_DCCP:
@@ -813,11 +820,11 @@ inline Packet* Packet::copy() const
         default:
                 ;
         }
- 
-	if (data_) 
+
+	if (data_)
 		p->data_ = data_->copy();
 	p->txinfo_.init(&txinfo_);
- 
+
 	return (p);
 }
 

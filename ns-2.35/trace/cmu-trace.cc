@@ -49,6 +49,7 @@
 #include <smac.h>
 #include <address.h>
 #include <tora/tora_packet.h> //TORA
+#include <anthocnet/ant_packet.h> //AntHocNet
 #include <imep/imep_spec.h>         // IMEP
 #include <aodv/aodv_packet.h> //AODV
 #include <aomdv/aomdv_packet.h>
@@ -153,7 +154,7 @@ CMUTrace::CMUTrace(const char *s, char t) : Trace(t)
 
 
 	newtrace_ = 0;
-	for (int i=0 ; i < MAX_NODE ; i++) 
+	for (int i=0 ; i < MAX_NODE ; i++)
 		nodeColor[i] = 3 ;
         node_ = 0;
 }
@@ -172,9 +173,9 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 		sh = HDR_SMAC(p);
 	else
 		mh = HDR_MAC802_11(p);
-	
+
 	double x = 0.0, y = 0.0, z = 0.0;
-       
+
 	char op = (char) type_;
 	Node* thisnode = Node::get_node_by_address(src_);
 	double energy = -1;
@@ -198,7 +199,7 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 	if (pt_->tagged()) {
 		int next_hop = -1 ;
 		Node* nextnode = Node::get_node_by_address(ch->next_hop_);
-        	if (nextnode) next_hop = nextnode->nodeid(); 
+        	if (nextnode) next_hop = nextnode->nodeid();
 
 		node_->getLoc(&x, &y, &z);
 
@@ -209,7 +210,7 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 		sprintf(pt_->buffer() + offset,
 			"%c "TIME_FORMAT" -s %d -d %d -p %s -k %3s -i %d "
 			"-N:loc {%.2f %.2f %.2f} -N:en %f ",
-			
+
 			op,				// event type
 			Scheduler::instance().clock(),	// time
 			src_,				// this node
@@ -232,7 +233,7 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 
 	// Use new ns trace format to replace the old cmu trace format)
 	if (newtrace_) {
-	    
+
 	    node_->getLoc(&x, &y, &z);
 	    // consistence
 	    if ( op == DROP ) { op = 'd';}
@@ -284,9 +285,9 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 #endif
 		tracename,
 		why,
-		
+
                 ch->uid(),                      // identifier for this event
-		
+
 		((ch->ptype() == PT_MAC) ? (
 		  (mh->dh_fc.fc_type == MAC_Type_Control) ? (
 		  (mh->dh_fc.fc_subtype == MAC_Subtype_RTS) ? "RTS"  :
@@ -307,7 +308,7 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 		   (mh->dh_fc.fc_type == MAC_Type_Management) ? (
 		  (mh->dh_fc.fc_subtype == MAC_Subtype_80211_Beacon) ? "BCN"  :
 		  (mh->dh_fc.fc_subtype == MAC_Subtype_AssocReq) ? "ACRQ"  :
-		  (mh->dh_fc.fc_subtype == MAC_Subtype_AssocRep) ? "ACRP"  : 
+		  (mh->dh_fc.fc_subtype == MAC_Subtype_AssocRep) ? "ACRP"  :
 		  (mh->dh_fc.fc_subtype == MAC_Subtype_Auth) ? "AUTH"  :
 		  (mh->dh_fc.fc_subtype == MAC_Subtype_ProbeReq) ? "PRRQ"  :
 		  (mh->dh_fc.fc_subtype == MAC_Subtype_ProbeRep) ? "PRRP"  :
@@ -318,10 +319,10 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 		  (sh->type == CTS_PKT) ? "CTS" :
 		  (sh->type == ACK_PKT) ? "ACK" :
 		  (sh->type == SYNC_PKT) ? "SYNC" :
-		  "UNKN") : 
+		  "UNKN") :
 		 packet_info.name(ch->ptype())),
 		ch->size());
-	
+
 	offset = strlen(pt_->buffer());
 
 	if(tracetype == TR_PHY) {
@@ -335,7 +336,7 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 	} else {
 		format_mac(p, offset);
         }
-	
+
 	offset = strlen(pt_->buffer());
 
 	if (thisnode) {
@@ -346,9 +347,9 @@ CMUTrace::format_mac_common(Packet *p, const char *why, int offset)
 				"[energy %f ei %.3f es %.3f et %.3f er %.3f] ",
 				thisnode->energy_model()->energy(),
 				thisnode->energy_model()->ei(),
-				thisnode->energy_model()->es(),				
+				thisnode->energy_model()->es(),
 				thisnode->energy_model()->et(),
-				thisnode->energy_model()->er());				
+				thisnode->energy_model()->er());
 		}
         }
 }
@@ -369,17 +370,17 @@ CMUTrace::format_mac(Packet *p, int offset)
 	// to an ethertype, which may not be true and causes some portability
 	// problems, so we zero the printing of this field in some cases
 	bool print_ether_type = true;
-	if ( (ch->ptype() == PT_MAC) && 
+	if ( (ch->ptype() == PT_MAC) &&
 	     ( (mh->dh_fc.fc_type == MAC_Type_Control) ||
 	       (mh->dh_fc.fc_type == MAC_Type_Management))) {
 		print_ether_type = false;
-	} 
-	
+	}
+
 	if (pt_->tagged()) {
 		sprintf(pt_->buffer() + offset,
 			"-M:dur %x -M:s %x -M:d %x -M:t %x ",
 			mh->dh_duration,		// MAC: duration
-			
+
 			// change wrt Mike's code
 			//ETHER_ADDR(mh->dh_da),		// MAC: source
 			//ETHER_ADDR(mh->dh_sa),		// MAC: destination
@@ -389,10 +390,10 @@ CMUTrace::format_mac(Packet *p, int offset)
 
 			print_ether_type ? GET_ETHER_TYPE(mh->dh_body) : 0);	// MAC: type
 	} else if (newtrace_) {
-		sprintf(pt_->buffer() + offset, 
+		sprintf(pt_->buffer() + offset,
 			"-Ma %x -Md %x -Ms %x -Mt %x ",
 			mh->dh_duration,
-			
+
 			// change wrt Mike's code
 			//ETHER_ADDR(mh->dh_da),
 			//ETHER_ADDR(mh->dh_sa),
@@ -406,7 +407,7 @@ CMUTrace::format_mac(Packet *p, int offset)
 			" [%x %x %x %x] ",
 			//*((u_int16_t*) &mh->dh_fc),
 			mh->dh_duration,
-			
+
 			// change wrt Mike's code
 			//ETHER_ADDR(mh->dh_da),
 			//ETHER_ADDR(mh->dh_sa),
@@ -426,14 +427,14 @@ CMUTrace::format_smac(Packet *p, int offset)
 		sh->dstAddr,
 		sh->srcAddr);
 }
-	
+
 
 void
 CMUTrace::format_ip(Packet *p, int offset)
 {
         struct hdr_cmn *ch = HDR_CMN(p);
 	struct hdr_ip *ih = HDR_IP(p);
-	
+
 	// hack the IP address to convert pkt format to hostid format
 	// for now until port ids are removed from IP address. -Padma.
 	int src = Address::instance().get_nodeaddr(ih->saddr());
@@ -514,7 +515,7 @@ CMUTrace::format_dsr(Packet *p, int offset)
 	hdr_sr *srh = hdr_sr::access(p);
 	int last_err_index = 0;
 	int last_reply_index = 0;
-        
+
 	if (srh->num_route_errors() > 1) {
 	    last_err_index = srh->num_route_errors() - 1;
 	}
@@ -542,7 +543,7 @@ CMUTrace::format_dsr(Packet *p, int offset)
 		    srh->down_links()[last_err_index].to_addr);
 	    return;
 	} else if (newtrace_) {
-	    sprintf(pt_->buffer() + offset, 
+	    sprintf(pt_->buffer() + offset,
 		"-P dsr -Ph %d -Pq %d -Ps %d -Pp %d -Pn %d -Pl %d -Pe %d->%d -Pw %d -Pm %d -Pc %d -Pb %d->%d ",
 		    srh->num_addrs(),                   // how many nodes travered
 
@@ -564,7 +565,7 @@ CMUTrace::format_dsr(Packet *p, int offset)
 
 	   return;
 	}
-	sprintf(pt_->buffer() + offset, 
+	sprintf(pt_->buffer() + offset,
 		"%d [%d %d] [%d %d %d %d->%d] [%d %d %d %d->%d]",
 		srh->num_addrs(),
 
@@ -595,7 +596,7 @@ CMUTrace::format_tcp(Packet *p, int offset)
 {
 	struct hdr_cmn *ch = HDR_CMN(p);
 	struct hdr_tcp *th = HDR_TCP(p);
-	
+
 	if (pt_->tagged()) {
 	    sprintf(pt_->buffer() + offset,
 		    "-tcp:s %d -tcp:a %d -tcp:f %d -tcp:o %d ",
@@ -631,7 +632,7 @@ CMUTrace::format_sctp(Packet* p,int offset)
 	struct hdr_sctp *sh = HDR_SCTP(p);
 	//struct hdr_ip *ih = HDR_IP(p);
 	char cChunkType;
-  
+
 	for(u_int i = 0; i < sh->NumChunks(); i++) {
 		switch(sh->SctpTrace()[i].eType) {
 		case SCTP_CHUNK_INIT:
@@ -640,15 +641,15 @@ CMUTrace::format_sctp(Packet* p,int offset)
 		case SCTP_CHUNK_COOKIE_ACK:
 			cChunkType = 'I';       // connection initialization
 			break;
-      
+
 		case SCTP_CHUNK_DATA:
 			cChunkType = 'D';
 			break;
-      
+
 		case SCTP_CHUNK_SACK:
 			cChunkType = 'S';
 			break;
-      
+
 		case SCTP_CHUNK_FORWARD_TSN:
 			cChunkType = 'R';
 			break;
@@ -656,7 +657,7 @@ CMUTrace::format_sctp(Packet* p,int offset)
 		case SCTP_CHUNK_HB:
 			cChunkType = 'H';
 			break;
-			
+
 		case SCTP_CHUNK_HB_ACK:
 			cChunkType = 'B';
 			break;
@@ -666,7 +667,7 @@ CMUTrace::format_sctp(Packet* p,int offset)
 			assert (false);
 			break;
 		}
-    
+
 		if( newtrace_ ) {
 			sprintf(pt_->buffer() + offset,
 				"-Pn sctp -Pnc %d -Pct %c "
@@ -702,12 +703,12 @@ CMUTrace::format_rtp(Packet *p, int offset)
 	struct hdr_ip *ih = HDR_IP(p);
         Node* thisnode = Node::get_node_by_address(src_);
 
-	//hacking, needs to change later, 
+	//hacking, needs to change later,
         int dst = Address::instance().get_nodeaddr(ih->daddr());
-	
+
 	if (dst == src_){
 		// I just received a cbr data packet
-		if (thisnode->energy_model() && 
+		if (thisnode->energy_model() &&
 		    thisnode->energy_model()->powersavingflag()) {
 			thisnode->energy_model()->set_node_state(EnergyModel::INROUTE);
 		}
@@ -787,7 +788,7 @@ CMUTrace::format_tora(Packet *p, int offset)
 		    sprintf(pt_->buffer() + offset,
 			"-P tora -Pt 0x%x -Pd %d -Pc QUERY ",
                         qh->tq_type, qh->tq_dst);
-			
+
                 } else {
 
                     sprintf(pt_->buffer() + offset, "[0x%x %d] (QUERY)",
@@ -841,7 +842,7 @@ CMUTrace::format_tora(Packet *p, int offset)
                             ch->tc_tau,
                             ch->tc_oid);
 		} else if (newtrace_) {
-		    sprintf(pt_->buffer() + offset, 
+		    sprintf(pt_->buffer() + offset,
 			"-P tora -Pt 0x%x -Pd %d -Pa %f -Po %d -Pc CLEAR ",
                         ch->tc_type,
                         ch->tc_dst,
@@ -911,7 +912,7 @@ CMUTrace::format_aodv(Packet *p, int offset)
         case AODVTYPE_RREP:
         case AODVTYPE_HELLO:
 	case AODVTYPE_RERR:
-		
+
 		if (pt_->tagged()) {
 		    sprintf(pt_->buffer() + offset,
 			    "-aodv:t %x -aodv:h %d -aodv:d %d -adov:ds %d "
@@ -925,7 +926,7 @@ CMUTrace::format_aodv(Packet *p, int offset)
 			    (rp->rp_type == AODVTYPE_RERR ? "ERROR" :
 			     "HELLO"));
 		} else if (newtrace_) {
-			
+
 			sprintf(pt_->buffer() + offset,
 			    "-P aodv -Pt 0x%x -Ph %d -Pd %d -Pds %d -Pl %f -Pc %s ",
 				rp->rp_type,
@@ -937,7 +938,7 @@ CMUTrace::format_aodv(Packet *p, int offset)
 				(rp->rp_type == AODVTYPE_RERR ? "ERROR" :
 				 "HELLO"));
 	        } else {
-			
+
 			sprintf(pt_->buffer() + offset,
 				"[0x%x %d [%d %d] %f] (%s)",
 				rp->rp_type,
@@ -950,7 +951,7 @@ CMUTrace::format_aodv(Packet *p, int offset)
 				 "HELLO"));
 		}
                 break;
-		
+
         default:
 #ifdef WIN32
                 fprintf(stderr,
@@ -970,11 +971,11 @@ CMUTrace::format_aomdv(Packet *p, int offset)
 	struct hdr_aomdv *ah = HDR_AOMDV(p);
 	struct hdr_aomdv_request *rq = HDR_AOMDV_REQUEST(p);
 	struct hdr_aomdv_reply *rp = HDR_AOMDV_REPLY(p);
-	
-	
+
+
 	switch(ah->ah_type) {
 		case AOMDVTYPE_RREQ:
-			
+
 			if (pt_->tagged()) {
 				sprintf(pt_->buffer() + offset,
 						  "-aomdv:t %x -aomdv:h %d -aomdv:b %d -aomdv:d %d "
@@ -988,7 +989,7 @@ CMUTrace::format_aomdv(Packet *p, int offset)
 						  rq->rq_src,
 						  rq->rq_src_seqno);
 			} else if (newtrace_) {
-				
+
 				sprintf(pt_->buffer() + offset,
 						  "-P aomdv -Pt 0x%x -Ph %d -Pb %d -Pd %d -Pds %d -Ps %d -Pss %d -Pc REQUEST ",
 						  rq->rq_type,
@@ -998,10 +999,10 @@ CMUTrace::format_aomdv(Packet *p, int offset)
 						  rq->rq_dst_seqno,
 						  rq->rq_src,
 						  rq->rq_src_seqno);
-				
-				
+
+
 			} else {
-				
+
 				sprintf(pt_->buffer() + offset,
 						  "[0x%x %d %d [%d %d] [%d %d]] (REQUEST)",
 						  rq->rq_type,
@@ -1013,11 +1014,11 @@ CMUTrace::format_aomdv(Packet *p, int offset)
 						  rq->rq_src_seqno);
 			}
 			break;
-			
+
 		case AOMDVTYPE_RREP:
 		case AOMDVTYPE_HELLO:
 		case AOMDVTYPE_RERR:
-			
+
 			if (pt_->tagged()) {
 				sprintf(pt_->buffer() + offset,
 						  "-aomdv:t %x -aomdv:h %d -aomdv:d %d -admov:ds %d "
@@ -1031,7 +1032,7 @@ CMUTrace::format_aomdv(Packet *p, int offset)
 						  (rp->rp_type == AOMDVTYPE_RERR ? "ERROR" :
 							"HELLO"));
 			} else if (newtrace_) {
-				
+
 				sprintf(pt_->buffer() + offset,
 						  "-P aomdv -Pt 0x%x -Ph %d -Pd %d -Pds %d -Pl %f -Pc %s ",
 						  rp->rp_type,
@@ -1058,7 +1059,7 @@ CMUTrace::format_aomdv(Packet *p, int offset)
 							 );
 			  }
 			break;
-			
+
 		default:
 #ifdef WIN32
 			fprintf(stderr,
@@ -1070,6 +1071,90 @@ CMUTrace::format_aomdv(Packet *p, int offset)
 			abort();
 	}
 }
+
+
+//AntHocNet begin
+void
+CMUTrace::format_anthocnet(Packet *p, int offset)
+{
+	struct hdr_cmn *ch = HDR_CMN(p);
+	AntBasicPacket *ah = HDR_AHN(p);
+
+	switch(ah->getAntType()) {
+		case ANTTYPEHELLO:
+			sprintf(pt_->buffer() + offset,
+				"<%d:%d> HELLO [%d : %d : %d - %d] - %f ",
+				ah->getSorceAddress(), ah->getSeqNum(), ch->prev_hop_, ch->next_hop(), ah->getDestinationAddres(), ah->sizeNodes(),
+				ah->getTimeStartAnt());
+			break;
+		case ANTTYPEPROACTIVE:
+			switch(ah->getAntDirection()) {
+				case ANT_UP:
+					sprintf(pt_->buffer() + offset,
+						"<%d:%d> PRFA [%d : %d : %d - %d] - %f ",
+						ah->getSorceAddress(), ah->getSeqNum(), ch->prev_hop_, ch->next_hop(), ah->getDestinationAddres(), ah->sizeNodes(),
+						ah->getTimeStartAnt());
+					break;
+				case ANT_DOWN:
+					AntBackPacket *bk = (AntBackPacket*) AntBackPacket::access(p);
+					sprintf(pt_->buffer() + offset,
+						"<%d:%d> PRBA [%d : %d : %d - %d] - %f (%f : %f)",
+						ah->getSorceAddress(), ah->getSeqNum(), ch->prev_hop_, ch->next_hop(), ah->getDestinationAddres(), ah->sizeNodes(),
+						ah->getTimeStartAnt(), bk->getPheromone(), bk->getPrevSINR());
+					break;
+			}
+			break;
+		case ANTTYPEREACTIVE:
+			switch(ah->getAntDirection()) {
+				case ANT_UP:
+					sprintf(pt_->buffer() + offset,
+						"<%d:%d> REFA [%d : %d : %d : %d] - %f",
+						ah->getSorceAddress(), ah->getSeqNum(), ch->prev_hop_, ch->next_hop(), ah->getDestinationAddres(), ah->sizeNodes(),
+						ah->getTimeStartAnt());
+					break;
+				case ANT_DOWN:
+					AntBackPacket *bk = (AntBackPacket*) AntBackPacket::access(p);
+					sprintf(pt_->buffer() + offset,
+						"<%d:%d> REBA [%d : %d : %d - %d] - %f (%f : %f)",
+						ah->getSorceAddress(), ah->getSeqNum(), ch->prev_hop_, ch->next_hop(), ah->getDestinationAddres(), ah->sizeNodes(),
+						ah->getTimeStartAnt(), bk->getPheromone(), bk->getPrevSINR());
+					break;
+			}
+			break;
+		case ANTTYPEREPAIR:
+			switch(ah->getAntDirection()) {
+				case ANT_UP:
+					//AntForwardRepairPacket *fk = (AntForwardRepairPacket*) AntForwardRepairPacket::access(p);
+					sprintf(pt_->buffer() + offset,
+						"<%d:%d> RRFA [%d : %d : %d - %d] - %f {%f}",
+						ah->getSorceAddress(), ah->getSeqNum(), ch->prev_hop_, ch->next_hop(), ah->getDestinationAddres(), ah->sizeNodes(),
+						ah->getTimeStartAnt());//, fk->getLifeAnt());
+					break;
+				case ANT_DOWN:
+					//AntBackRepairPacket *bk = (AntBackRepairPacket*) AntBackRepairPacket::access(p);
+					AntBackPacket *bk = (AntBackPacket*) AntBackPacket::access(p);
+					sprintf(pt_->buffer() + offset,
+						"<%d:%d> RRBA [%d : %d : %d - %d] - %f (%f : %f) {%f}",
+						ah->getSorceAddress(), ah->getSeqNum(), ch->prev_hop_, ch->next_hop(), ah->getDestinationAddres(), ah->sizeNodes(),
+						ah->getTimeStartAnt(), bk->getPheromone(), bk->getPrevSINR());//, bk->getLifeAnt());
+					break;
+			}
+			break;
+
+		default:
+#ifdef WIN32
+			fprintf(stderr,
+					  "CMUTrace::format_anthocnet: invalid AntHocNet packet type\n");
+#else
+			fprintf(stderr,
+					  "%s: invalid AntHocNet packet type\n", __FUNCTION__);
+#endif
+			abort();
+			break;
+	}
+}
+//AntHocNet end
+
 
 void
 CMUTrace::format_mdart(Packet *p, int offset)
@@ -1215,7 +1300,7 @@ CMUTrace::nam_format(Packet *p, int offset)
         int dst = Address::instance().get_nodeaddr(ih->daddr());
 
 	nextnode = Node::get_node_by_address(ch->next_hop_);
-        if (nextnode) next_hop = nextnode->nodeid(); 
+        if (nextnode) next_hop = nextnode->nodeid();
 
 	srcnode = Node::get_node_by_address(src_);
 
@@ -1223,9 +1308,9 @@ CMUTrace::nam_format(Packet *p, int offset)
 	double initenergy = -1;
 
 	//default value for changing node color with respect to energy depletion
-	double l1 = 0.5; 
+	double l1 = 0.5;
 	double l2 = 0.2;
-	
+
 	if (srcnode) {
 	    if (srcnode->energy_model()) {
 		    energy = srcnode->energy_model()->energy();
@@ -1238,17 +1323,17 @@ CMUTrace::nam_format(Packet *p, int offset)
         int energyLevel = 0 ;
         double energyLeft = (double)(energy/initenergy) ;
 
-        if ((energyLeft <= 1 ) && (energyLeft >= l1 )) energyLevel = 3;	
-        if ((energyLeft >= l2 ) && (energyLeft < l1 )) energyLevel = 2;	
-        if ((energyLeft > 0 ) && (energyLeft < l2 )) energyLevel = 1;	
+        if ((energyLeft <= 1 ) && (energyLeft >= l1 )) energyLevel = 3;
+        if ((energyLeft >= l2 ) && (energyLeft < l1 )) energyLevel = 2;
+        if ((energyLeft > 0 ) && (energyLeft < l2 )) energyLevel = 1;
 
-	if (energyLevel == 0) 
+	if (energyLevel == 0)
 		strcpy(colors,"-c black -o red");
-        else if (energyLevel == 1) 
+        else if (energyLevel == 1)
 		strcpy(colors,"-c red -o yellow");
-        else if (energyLevel == 2) 
+        else if (energyLevel == 2)
 		strcpy(colors,"-c yellow -o green");
-        else if (energyLevel == 3) 
+        else if (energyLevel == 3)
 		strcpy(colors,"-c green -o black");
 
 	// A simple hack for scadds demo (fernandez's visit) -- Chalermek
@@ -1287,7 +1372,7 @@ CMUTrace::nam_format(Packet *p, int offset)
 	}
 	//</zheng: add for 802.15.4>
 
-	// convert to nam format 
+	// convert to nam format
 	if (op == 's') op = 'h' ;
 	if (op == 'D') op = 'd' ;
 	if (op == 'h') {
@@ -1298,7 +1383,7 @@ CMUTrace::nam_format(Packet *p, int offset)
 			next_hop,
 			ptype,			//<zheng: modify for 802.15.4>packet_info.name(ch->ptype()),
 			ch->size(),
-			pkt_color,   
+			pkt_color,
 			ch->uid(),
 			tracename);
 
@@ -1314,7 +1399,7 @@ CMUTrace::nam_format(Packet *p, int offset)
 			pkt_color,
 			ch->uid(),
 			tracename);
-		
+
 		offset = strlen(pt_->nbuffer());
 		pt_->namdump();
 	}
@@ -1322,7 +1407,7 @@ CMUTrace::nam_format(Packet *p, int offset)
         // if nodes are too far from each other
 	// nam won't dump SEND event 'cuz it's
 	// gonna be dropped later anyway
-	// this value 250 is pre-calculated by using 
+	// this value 250 is pre-calculated by using
 	// two-ray ground refelction model with fixed
 	// transmission power 3.652e-10
 //	if ((type_ == SEND)  && (distance > 250 )) return ;
@@ -1336,7 +1421,7 @@ CMUTrace::nam_format(Packet *p, int offset)
 			    MAX_NODE);
 	       exit(0);
 	   }
-	   if (nodeColor[src_] != energyLevel ) { //only dump it when node  
+	   if (nodeColor[src_] != energyLevel ) { //only dump it when node
 	       sprintf(pt_->nbuffer() ,                    //color change
 	          "n -t %.9f -s %d -S COLOR %s",
 	           Scheduler::instance().clock(),
@@ -1345,7 +1430,7 @@ CMUTrace::nam_format(Packet *p, int offset)
                offset = strlen(pt_->nbuffer());
                pt_->namdump();
 	       nodeColor[src_] = energyLevel ;
-	    }   
+	    }
         }
 
 	sprintf(pt_->nbuffer() ,
@@ -1373,7 +1458,7 @@ if (Nam802_15_4::Nam_Status)
 		// Antenna/OmniAntenna
 		if (bradius == 0.0) calculate_broadcast_parameters();
 
-		double radius = bradius*radius_scaling_factor_; 
+		double radius = bradius*radius_scaling_factor_;
 
 		// duration is calculated based on the radius and
 		// the speed of light (299792458 m/s)
@@ -1405,7 +1490,7 @@ void CMUTrace::format(Packet* p, const char *why)
 	 */
 	format_mac_common(p, why, offset);
 
-	if (pt_->namchannel()) 
+	if (pt_->namchannel())
 		nam_format(p, offset);
 	offset = strlen(pt_->buffer());
 	switch(ch->ptype()) {
@@ -1474,7 +1559,7 @@ void CMUTrace::format(Packet* p, const char *why)
 int
 CMUTrace::command(int argc, const char*const* argv)
 {
-	
+
         if(argc == 3) {
                 if(strcmp(argv[1], "node") == 0) {
                         node_ = (MobileNode*) TclObject::lookup(argv[2]);
@@ -1557,7 +1642,7 @@ int CMUTrace::node_energy()
 		if (thisnode->energy_model()) {
 			energy = thisnode->energy_model()->energy();
 		}
-	} 
+	}
 	if (energy > 0) return 1;
 	return 0;
 }

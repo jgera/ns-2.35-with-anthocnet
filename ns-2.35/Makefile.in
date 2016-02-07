@@ -53,10 +53,10 @@ PERL	= @PERL@
 # for diffusion
 #DIFF_INCLUDES = "./diffusion3/main ./diffusion3/lib ./diffusion3/nr ./diffusion3/ns"
 
-CCOPT	= @V_CCOPT@ 
+CCOPT	= @V_CCOPT@
 STATIC	= @V_STATIC@
 #LDFLAGS	= $(STATIC)
-LDFLAGS	= @LDFLAGS@ 
+LDFLAGS	= @LDFLAGS@
 LDOUT	= -o $(BLANK)
 
 DEFINE	= -DTCP_DELAY_BIND_ALL -DNO_TK @V_DEFINE@ @V_DEFINES@ @DEFS@ -DNS_DIFFUSION -DSMAC_NO_SYNC -DCPP_NAMESPACE=@CPP_NAMESPACE@ -DUSE_SINGLE_ADDRESS_SPACE -Drng_test
@@ -82,7 +82,7 @@ LIB	= \
 	-lm @LIBS@
 #	-L@libdir@ \
 
-CFLAGS	+= $(CCOPT) $(DEFINE) 
+CFLAGS	+= $(CCOPT) $(DEFINE)
 
 # Explicitly define compilation rules since SunOS 4's make doesn't like gcc.
 # Also, gcc does not remove the .o before forking 'as', which can be a
@@ -108,7 +108,7 @@ NSTK = nstk
 
 # To allow conf/makefile.win overwrite this macro
 # We will set these two macros to empty in conf/makefile.win since VC6.0
-# does not seem to support the STL in gcc 2.8 and up. 
+# does not seem to support the STL in gcc 2.8 and up.
 OBJ_STL = diffusion3/lib/nr/nr.o diffusion3/lib/dr.o \
 	diffusion3/filters/diffusion/one_phase_pull.o \
 	diffusion3/filters/diffusion/two_phase_pull.o \
@@ -274,6 +274,8 @@ OBJ_CC = \
 	dsr/dsr_proto.o dsr/flowstruct.o dsr/linkcache.o \
 	dsr/simplecache.o dsr/sr_forwarder.o \
 	aodv/aodv_logs.o aodv/aodv.o \
+	anthocnet/ant_packet.o anthocnet/ahn_pheromone_table.o \
+	anthocnet/ahn_ant_nest.o anthocnet/ahn_router.o \
 	aodv/aodv_rtable.o aodv/aodv_rqueue.o \
 	aomdv/aomdv_logs.o aomdv/aomdv.o \
 	aomdv/aomdv_rtable.o aomdv/aomdv_rqueue.o \
@@ -377,7 +379,7 @@ OBJ_GEN = $(GEN_DIR)version.o $(GEN_DIR)ns_tcl.o $(GEN_DIR)ptypes.o
 
 SRC =	$(OBJ_C:.o=.c) $(OBJ_CC:.o=.cc) \
 	$(OBJ_EMULATE_C:.o=.c) $(OBJ_EMULATE_CC:.o=.cc) \
-	common/tclAppInit.cc common/tkAppInit.cc 
+	common/tclAppInit.cc common/tkAppInit.cc
 
 OBJ =	$(OBJ_C) $(OBJ_CC) $(OBJ_GEN) $(OBJ_COMPAT)
 
@@ -385,7 +387,7 @@ CLEANFILES = ns nse nsx ns.dyn $(OBJ) $(OBJ_EMULATE_CC) \
 	$(OBJ_EMULATE_C) common/tclAppInit.o common/main-monolithic.o \
 	common/tkAppInit.o nstk \
 	$(GEN_DIR)* $(NS).core core core.$(NS) core.$(NSX) core.$(NSE) \
-	common/ptypes2tcl common/ptypes2tcl.o 
+	common/ptypes2tcl common/ptypes2tcl.o
 
 SUBDIRS=\
 	indep-utils/cmu-scen-gen/setdest \
@@ -409,29 +411,29 @@ ifeq ($(NSLIB),libns.dll)
 
 # This is for cygwin
 
-NS_CPPFLAGS = -DNSLIBNAME=\"$(NSLIB)\" 
+NS_CPPFLAGS = -DNSLIBNAME=\"$(NSLIB)\"
 NS_LIBS =  @DL_LIBS@
 
-$(NSLIB): $(OBJ) common/tclAppInit.o 
+$(NSLIB): $(OBJ) common/tclAppInit.o
 	$(LINK) -shared $(LDFLAGS) \
 		$(LDOUT)$@  \
 		-Wl,--export-all-symbols \
 		-Wl,--enable-auto-import \
 		-Wl,--out-implib=$@.a \
 		-Wl,--whole-archive $^ \
-		-Wl,--no-whole-archive @V_IMPORT_LIBS@ 
+		-Wl,--no-whole-archive @V_IMPORT_LIBS@
 
-$(NS): $(NSLIB) common/main-modular.cc 
+$(NS): $(NSLIB) common/main-modular.cc
 	$(LINK) $(NS_CPPFLAGS) $(LDFLAGS) $(LDOUT)$@ common/main-modular.cc $(NS_LIBS)
 
-else 
+else
 
 # default for all systems but cygwin
 
 $(NS): $(OBJ) common/tclAppInit.o common/main-monolithic.o
 	$(LINK) $(LDFLAGS) $(LDOUT)$@ $^ $(LIB)
 
-endif 
+endif
 
 
 
@@ -441,16 +443,16 @@ Makefile: Makefile.in
 	false
 
 $(NSE): $(OBJ) common/tclAppInit.o common/main-monolithic.o $(OBJ_EMULATE_CC) $(OBJ_EMULATE_C)
-	$(LINK) $(LDFLAGS) $(LDOUT)$@ $^ $(LIB) 
-
-$(NSTK): $(OBJ) common/tkAppInit.o 
 	$(LINK) $(LDFLAGS) $(LDOUT)$@ $^ $(LIB)
 
-ns.dyn: $(OBJ) common/tclAppInit.o common/main-monolithic.o 
+$(NSTK): $(OBJ) common/tkAppInit.o
+	$(LINK) $(LDFLAGS) $(LDOUT)$@ $^ $(LIB)
+
+ns.dyn: $(OBJ) common/tclAppInit.o common/main-monolithic.o
 	$(LINK) $(LDFLAGS) -o $@ $^ $(LIB)
 
 PURIFY	= purify -cache-dir=/tmp
-ns-pure: $(OBJ) common/tclAppInit.o common/main-monolithic.o 
+ns-pure: $(OBJ) common/tclAppInit.o common/main-monolithic.o
 	$(PURIFY) $(LINK) $(LDFLAGS) -o $@ $^ $(LIB)
 
 NS_TCL_LIB = \
@@ -579,7 +581,7 @@ distclean-recursive:
 tags:	force
 	ctags -wtd *.cc *.h webcache/*.cc webcache/*.h dsdv/*.cc dsdv/*.h \
 	dsr/*.cc dsr/*.h webcache/*.cc webcache/*.h lib/*.cc lib/*.h \
-	../Tcl/*.cc ../Tcl/*.h 
+	../Tcl/*.cc ../Tcl/*.h
 
 TAGS:	force
 	etags *.cc *.h webcache/*.cc webcache/*.h dsdv/*.cc dsdv/*.h \

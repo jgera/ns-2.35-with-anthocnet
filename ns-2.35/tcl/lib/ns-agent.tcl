@@ -1,7 +1,7 @@
 #
 # Copyright (c) 1996-1997 Regents of the University of California.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
@@ -17,7 +17,7 @@
 # 4. Neither the name of the University nor of the Research Group may be
 #    used to endorse or promote products derived from this software without
 #    specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,7 +40,7 @@
 #
 # The following overload was added to inform users of the backward
 # compatibility issues resulted from having a 32-bit addressing space.
-# 
+#
 Agent instproc set args {
 	if { [lindex $args 0] == "dst_" } {
 		puts "Warning dst_ is no longer being supported in NS. $args"
@@ -68,7 +68,7 @@ Agent instproc init {} {
 	#$self set nodeid_ -1
 }
 
-Agent instproc nodeid {} { 
+Agent instproc nodeid {} {
         [$self set node_] id
 }
 
@@ -80,7 +80,7 @@ Agent instproc port {} {
 #
 # Lower 8 bits of dst_ are portID_.  this proc supports setting the interval
 # for delayed acks
-#       
+#
 Agent instproc dst-port {} {
 	$self instvar dst_port_
 	return [expr $dst_port_]
@@ -97,10 +97,10 @@ Agent instproc attach-source {s_type} {
 	return $source
 }
 
-# 
+#
 # Add application of type s_type to agent and return the app
 # Note that s_type must be defined as a packet type in packet.h
-# 
+#
 Agent instproc attach-app {s_type} {
 	set app_ [new Application/$s_type]
 	$app_ attach-agent $self
@@ -150,7 +150,7 @@ Agent/CBR/UDP/SA instproc attach-tbf { tbf } {
 # I use this function from agent constructors to set appropriate vars:
 # for instance to set Agent/rtProto/DV::INFINITY, or
 # Agent/SRM/SSM::ttlGroupScope_
-# 
+#
 Agent proc set-maxttl {objectOrClass var} {
 	if { [catch "$objectOrClass set $var" value] ||	\
 	     ($value < [Agent set ttl_]) } {
@@ -169,17 +169,17 @@ Agent/TCP instproc init {} {
 
 #Agent instproc init args {
 #        $self next $args
-#}       
+#}
 
 #Agent/rtProto instproc init args {
 #        puts "DOWN HERE 2"
 #        $self next $args
-#}       
+#}
 #Agent/rtProto/TORA -superclass Agent
 Agent/TORA instproc init args {
 
          $self next $args
-}       
+}
 
 Agent/TORA set sport_	0
 Agent/TORA set dport_	0
@@ -191,6 +191,15 @@ Agent/AODV instproc init args {
 
 Agent/AODV set sport_   0
 Agent/AODV set dport_   0
+
+# AntHocNet patch
+Agent/AntHocNet instproc init args {
+
+         $self next $args
+}
+
+Agent/AntHocNet set sport_   0
+Agent/AntHocNet set dport_   0
 
 # AOMDV patch
 Agent/AOMDV set sport_   0

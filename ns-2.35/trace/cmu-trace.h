@@ -95,8 +95,8 @@
 
 /**
  * This class allows a dynamic library to define the tracing format
- * for newly defined packet types 
- * 
+ * for newly defined packet types
+ *
  */
 class PacketTracer
 {
@@ -143,7 +143,7 @@ private:
         void    nam_format(Packet *p, int offset);
 
 	void	format_phy(Packet *p, int offset);
-	
+
 	void	format_mac_common(Packet *p, const char *why, int offset);
 	void    format_mac(Packet *p, int offset);
 	void    format_smac(Packet *p, int offset);
@@ -161,6 +161,7 @@ private:
         void    format_aodv(Packet *p, int offset);
 	void    format_aomdv(Packet *p, int offset);
 	void    format_mdart(Packet *p, int offset);
+	void    format_anthocnet(Packet *p, int offset); //AntHocNet
 
 	// This holds all the tracers added at run-time
 	static PacketTracer *pktTrc_;
