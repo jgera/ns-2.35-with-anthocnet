@@ -26,3 +26,6 @@
 *.exe
 *.out
 *.app
+
+#Tests
+ns-2.35/tcl/test
