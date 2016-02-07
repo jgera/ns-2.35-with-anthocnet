@@ -630,7 +630,7 @@ Simulator instproc create-wireless-node args {
 		    AODV {
 			    set ragent [$self create-aodv-agent $node]
 		    }
-                    #AntHocNet patch
+                    # AntHocNet patch
 		    AntHocNet {
 			    set ragent [$self create-ant-agent $node]
 		    }
