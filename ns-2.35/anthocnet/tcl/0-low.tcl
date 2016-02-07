@@ -56,7 +56,7 @@ $ns_ node-config -adhocRouting $val(rp) \
 		-routerTrace ON \
 		-macTrace ON \
 		-movementTrace OFF \
-		-channel $chan_1_ 
+		-channel $chan_1_
 
 # Ustawienie wartosci dla AntHocNet
 #Agent/AntHocNet set num_nodes_ 2		# number of nodes in topology				//liczba węzłów w topologii
@@ -68,8 +68,8 @@ $ns_ node-config -adhocRouting $val(rp) \
 # node_(1) can also be created with the same configuration, or with a different	/ node_(1) moze byc takze tworzony z taka sama konfiguracja, lub z innym
 # channel specified.								/ specyfikacja kanalu
 # Uncomment below two lines will create node_(1) with a different channel.	/ Odkomentuj poniżej dwie linie stworza node_(1) z innegym kanałem.
-#  $ns_ node-config \								
-#		 -channel $chan_2_ 						
+#  $ns_ node-config \
+#		 -channel $chan_2_
 
 
 set node_(0) [$ns_ node]
@@ -101,7 +101,7 @@ $ns_ at 3.0 "$node_(1) setdest 50.0 40.0 25.0"
 $ns_ at 3.0 "$node_(0) setdest 48.0 38.0 5.0"
 
 # Node_(1) then starts to move away from node_(0)	/Node_(1) następnie zaczynie się oddalac od node_(0)
-$ns_ at 20.0 "$node_(1) setdest 490.0 480.0 30.0" 
+$ns_ at 20.0 "$node_(1) setdest 490.0 480.0 30.0"
 
 # Setup traffic flow between nodes			/Ustawienia ruchu między węzłami
 # TCP connections between node_(0) and node_(1)		/Polaczenie TCP pomiedzy wezlami node_(0) i node_(1)
@@ -114,7 +114,7 @@ $ns_ attach-agent $node_(1) $sink
 $ns_ connect $tcp $sink
 set ftp [new Application/FTP]
 $ftp attach-agent $tcp
-$ns_ at 3.0 "$ftp start" 
+$ns_ at 3.0 "$ftp start"
 
 #
 # Tell nodes when the simulation ends			/Powiedz węzłom gdy symulacja sie kończy
