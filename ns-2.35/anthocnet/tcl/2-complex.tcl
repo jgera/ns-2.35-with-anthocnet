@@ -13,13 +13,13 @@ set val(ifqlen)         50                         ;# max packet in ifq
 set val(nn)             300                        ;# number of mobilenodes
 set val(rp)             AntHocNet                  ;# routing protocol
 set val(x)              1500   			   ;# X dimension of topography
-set val(y)              1400   			   ;# Y dimension of topography  
+set val(y)              1400   			   ;# Y dimension of topography
 set val(stop)		150			   ;# time of simulation end
 
 set ns		  [new Simulator]
 set tracefd       [open complex-ant.tr w]
-set windowVsTime2 [open win-complex-ant.tr w] 
-set namtrace      [open complex-wrls.nam w]    
+set windowVsTime2 [open win-complex-ant.tr w]
+set namtrace      [open complex-wrls.nam w]
 
 $ns trace-all $tracefd
 $ns namtrace-all-wireless $namtrace $val(x) $val(y)
@@ -32,7 +32,7 @@ $topo load_flatgrid $val(x) $val(y)
 create-god $val(nn)
 
 #
-#  Create nn mobilenodes [$val(nn)] and attach them to the channel. 
+#  Create nn mobilenodes [$val(nn)] and attach them to the channel.
 #
 
 # configure the nodes
@@ -50,9 +50,9 @@ create-god $val(nn)
 			 -routerTrace ON \
 			 -macTrace OFF \
 			 -movementTrace ON
-			 
+
 	for {set i 0} {$i < $val(nn) } { incr i } {
-		set node_($i) [$ns node]	
+		set node_($i) [$ns node]
 	}
 
 # Provide initial location of mobilenodes
@@ -75,6 +75,9 @@ for {set j 0} {$j < $val(nn) } { incr j } {
         set x [expr floor(rand() * $val(x))]
         set y [expr floor(rand() * $val(y))]
 
+		if {$x < 1} { set x 1.0 }
+		if {$y < 1} { set y 1.0 }
+
         $ns at $timer "$node_($i) setdest $x $y 3.0"
     }
 }
@@ -88,7 +91,7 @@ $ns attach-agent $node_(1) $sink
 $ns connect $tcp $sink
 set ftp [new Application/FTP]
 $ftp attach-agent $tcp
-$ns at 10.0 "$ftp start" 
+$ns at 10.0 "$ftp start"
 
 # Printing the window size
 proc plotWindow {tcpSource file} {
@@ -98,7 +101,7 @@ set now [$ns now]
 set cwnd [$tcpSource set cwnd_]
 puts $file "$now $cwnd"
 $ns at [expr $now+$time] "plotWindow $tcpSource $file" }
-$ns at 10.1 "plotWindow $tcp $windowVsTime2"  
+$ns at 10.1 "plotWindow $tcp $windowVsTime2"
 
 # Define node initial position in nam
 for {set i 0} {$i < $val(nn)} { incr i } {
@@ -111,7 +114,7 @@ for {set i 0} {$i < $val(nn) } { incr i } {
     $ns at $val(stop) "$node_($i) reset";
 }
 
-# ending nam and the simulation 
+# ending nam and the simulation
 $ns at $val(stop) "$ns nam-end-wireless $val(stop)"
 $ns at $val(stop) "stop"
 $ns at 150.01 "puts \"end simulation\" ; $ns halt"
@@ -123,5 +126,3 @@ proc stop {} {
 }
 
 $ns run
-
-

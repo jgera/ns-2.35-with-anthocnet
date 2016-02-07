@@ -1,4 +1,4 @@
-/*-*-	Mode:C++; c-basic-offset:8; tab-width:8; indent-tabs-mode:t -*- 
+/*-*-	Mode:C++; c-basic-offset:8; tab-width:8; indent-tabs-mode:t -*-
  *
  * Copyright (c) 1997 Regents of the University of California.
  * All rights reserved.
@@ -33,13 +33,13 @@
  *
  * $Header: /cvsroot/nsnam/ns-2/common/mobilenode.cc,v 1.36 2006/02/22 13:21:52 mahrenho Exp $
  *
- * Code in this file will be changed in the near future. From now on it 
+ * Code in this file will be changed in the near future. From now on it
  * should be treated as for backward compatibility only, although it is in
  * active use by many other code in ns. - Aug 29, 2000
  */
 
-/* 
- * CMU-Monarch project's Mobility extensions ported by Padma Haldar, 
+/*
+ * CMU-Monarch project's Mobility extensions ported by Padma Haldar,
  * 11/98.
  */
 
@@ -65,7 +65,7 @@
 #include "god.h"
 
 // XXX Must supply the first parameter in the macro otherwise msvc
-// is unhappy. 
+// is unhappy.
 static LIST_HEAD(_dummy_MobileNodeList, MobileNode) nodehead = { 0 };
 
 static class MobileNodeClass : public TclClass {
@@ -115,7 +115,7 @@ PositionHandler::handle(Event*)
    Mobile Node
    ====================================================================== */
 
-MobileNode::MobileNode(void) : 
+MobileNode::MobileNode(void) :
 	pos_handle_(this)
 {
 	X_ = Y_ = Z_ = speed_ = 0.0;
@@ -132,7 +132,7 @@ MobileNode::MobileNode(void) :
 
 	position_update_interval_ = MN_POSITION_UPDATE_INTERVAL;
 	position_update_time_ = 0.0;
-	
+
 
 	LIST_INSERT_HEAD(&nodehead, this, link_);	// node list
 	LIST_INIT(&ifhead_);				// interface list
@@ -140,7 +140,7 @@ MobileNode::MobileNode(void) :
 	bind("Y_", &Y_);
 	bind("Z_", &Z_);
 	bind("speed_", &speed_);
-	
+
 }
 
 int
@@ -177,7 +177,7 @@ MobileNode::command(int argc, const char*const* argv)
 			tcl.resultf("%f", energy_model()->energy());
 			return TCL_OK;
 		} else if (strcmp(argv[1], "adjustenergy") == 0) {
-			// assume every 10 sec schedule and 1.15 W 
+			// assume every 10 sec schedule and 1.15 W
 			// idle energy consumption. needs to be
 			// parameterized.
 			idle_energy_patch(10, 1.15);
@@ -199,14 +199,14 @@ MobileNode::command(int argc, const char*const* argv)
 			tcl.evalf("%s NodeOff", str);
 			tcl.evalf("%s set ragent_", name_);
 			str = tcl.result();
-			tcl.evalf("%s reset-state", str);
+			tcl.evalf("%s reset", str);
 			God::instance()->ComputeRoute();
 		     	return TCL_OK;
 		} else if (strcmp(argv[1], "shutdown") == 0) {
 			// set node state
 			//Phy *p;
 			energy_model()->node_on() = false;
-			
+
 			//p = ifhead().lh_first;
 			//if (p) ((WirelessPhy *)p)->node_off();
 			return TCL_OK;
@@ -214,7 +214,7 @@ MobileNode::command(int argc, const char*const* argv)
 			energy_model()->node_on() = true;
 			return TCL_OK;
 		}
-	
+
 	} else if(argc == 3) {
 		if(strcmp(argv[1], "addif") == 0) {
 			WiredPhy* phyp = (WiredPhy*)TclObject::lookup(argv[2]);
@@ -265,21 +265,21 @@ MobileNode::command(int argc, const char*const* argv)
 			if(base_stn_ == -1)
 				return TCL_ERROR;
 			return TCL_OK;
-		} 
+		}
 	} else if (argc == 4) {
 		if (strcmp(argv[1], "idleenergy") == 0) {
 			idle_energy_patch(atof(argv[2]),atof(argv[3]));
 			return TCL_OK;
 		}
 	} else if (argc == 5) {
-		if (strcmp(argv[1], "setdest") == 0) { 
+		if (strcmp(argv[1], "setdest") == 0) {
 			/* <mobilenode> setdest <X> <Y> <speed> */
 #ifdef DEBUG
 			fprintf(stderr, "%d - %s: calling set_destination()\n",
 				address_, __FUNCTION__);
 #endif
-  
-			if (set_destination(atof(argv[2]), atof(argv[3]), 
+
+			if (set_destination(atof(argv[2]), atof(argv[3]),
 					    atof(argv[4])) < 0)
 				return TCL_ERROR;
 			return TCL_OK;
@@ -299,14 +299,14 @@ MobileNode::dump(void)
 	fprintf(stdout, "Index: %d\n", address_);
 	fprintf(stdout, "Network Interface List\n");
  	for(n = ifhead_.lh_first; n; n = n->nextnode() )
-		n->dump();	
+		n->dump();
 	fprintf(stdout, "--------------------------------------------------\n");
 }
 
 /* ======================================================================
    Position Functions
    ====================================================================== */
-void 
+void
 MobileNode::start()
 {
 	Scheduler& s = Scheduler::instance();
@@ -327,10 +327,10 @@ MobileNode::start()
 	s.schedule(&pos_handle_, &pos_intr_, position_update_interval_);
 }
 
-void 
+void
 MobileNode::log_movement()
 {
-        if (!log_target_) 
+        if (!log_target_)
 		return;
 
 	Scheduler& s = Scheduler::instance();
@@ -344,15 +344,15 @@ MobileNode::log_movement()
 void
 MobileNode::log_energy(int flag)
 {
-	if (!log_target_) 
+	if (!log_target_)
 		return;
 	Scheduler &s = Scheduler::instance();
 	if (flag) {
 		sprintf(log_target_->pt_->buffer(),"N -t %f -n %d -e %f", s.clock(),
-			address_, energy_model_->energy()); 
+			address_, energy_model_->energy());
 	} else {
 		sprintf(log_target_->pt_->buffer(),"N -t %f -n %d -e 0 ", s.clock(),
-			address_); 
+			address_);
 	}
 	log_target_->pt_->dump();
 }
@@ -412,30 +412,30 @@ MobileNode::set_destination(double x, double y, double s)
 		return -1;
 	if(y >= T_->upperY() || y <= T_->lowerY())
 		return -1;
-	
+
 	update_position();	// figure out where we are now
-	
+
 	destX_ = x;
 	destY_ = y;
 	speed_ = s;
-	
+
 	dX_ = destX_ - X_;
 	dY_ = destY_ - Y_;
 	dZ_ = 0.0;		// this isn't used, since flying isn't allowed
 
 	double len;
-	
+
 	if (destX_ != X_ || destY_ != Y_) {
 		// normalize dx, dy to unit len
 		len = sqrt( (dX_ * dX_) + (dY_ * dY_) );
 		dX_ /= len;
 		dY_ /= len;
 	}
-  
+
 	position_update_time_ = Scheduler::instance().clock();
 
 #ifdef DEBUG
-	fprintf(stderr, "%d - %s: calling log_movement()\n", 
+	fprintf(stderr, "%d - %s: calling log_movement()\n",
 		address_, __FUNCTION__);
 #endif
 	log_movement();
@@ -444,27 +444,27 @@ MobileNode::set_destination(double x, double y, double s)
 	if (GridKeeper::instance()){
 		GridKeeper* gp =  GridKeeper::instance();
 		gp-> new_moves(this);
-	}                     
+	}
 
 	if (namChan_ != 0) {
-		
-		double v = speed_ * sqrt( (dX_ * dX_) + (dY_ * dY_)); 
-		
-		sprintf(nwrk_,     
+
+		double v = speed_ * sqrt( (dX_ * dX_) + (dY_ * dY_));
+
+		sprintf(nwrk_,
 			"n -t %f -s %d -x %f -y %f -U %f -V %f -T %f",
 			Scheduler::instance().clock(),
 			nodeid_,
 			X_, Y_,
 			speed_ * dX_, speed_ * dY_,
-			( v != 0) ? len / v : 0. );   
-		namdump();         
+			( v != 0) ? len / v : 0. );
+		namdump();
 	}
 	return 0;
 }
 
 
 
-void 
+void
 MobileNode::update_position()
 {
 	double now = Scheduler::instance().clock();
@@ -473,7 +473,7 @@ MobileNode::update_position()
 	//double oldY = Y_;
 
 	if ((interval == 0.0)&&(position_update_time_!=0))
-		return;         // ^^^ for list-based imprvmnt 
+		return;         // ^^^ for list-based imprvmnt
 
 
 	// CHECK, IF THE SPEED IS 0, THEN SKIP, but usually it's not 0
@@ -484,7 +484,7 @@ MobileNode::update_position()
 	  X_ = destX_;		// correct overshoot (slow? XXX)
 	if ((dY_ > 0 && Y_ > destY_) || (dY_ < 0 && Y_ < destY_))
 	  Y_ = destY_;		// correct overshoot (slow? XXX)
-	
+
 	/* list based improvement */
 	if(oldX != X_)// || oldY != Y_)
 		T_->updateNodesList(this, oldX);//, oldY);
@@ -553,20 +553,20 @@ MobileNode::random_direction()
 	 * direction vector.
 	 */
 	if (X_ > (T_->upperX() - 2*T_->resol())) {
-		if (dX_ > 0) 
+		if (dX_ > 0)
 			dX_ = -dX_;
 	} else if (X_ < (T_->lowerX() + 2*T_->resol())) {
-		if (dX_ < 0) 
+		if (dX_ < 0)
 			dX_ = -dX_;
 	} else if (Random::uniform() <= 0.5) {
 		dX_ = -dX_;
 	}
 
 	if (Y_ > (T_->upperY() - 2*T_->resol())) {
-		if (dY_ > 0) 
+		if (dY_ > 0)
 			dY_ = -dY_;
 	} else if (Y_ < (T_->lowerY() + 2*T_->resol())) {
-		if (dY_ < 0) 
+		if (dY_ < 0)
 			dY_ = -dY_;
 	} else if(Random::uniform() <= 0.5) {
 		dY_ = -dY_;
@@ -602,7 +602,7 @@ MobileNode::propdelay(MobileNode *m)
 	return distance(m) / SPEED_OF_LIGHT;
 }
 
-void 
+void
 MobileNode::idle_energy_patch(float /*total*/, float /*P_idle*/)
 {
 }

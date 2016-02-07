@@ -799,7 +799,7 @@ configure:7959: $? = 0
 configure:7959: result: yes
 configure:7959: checking for fesetprecision
 configure:7959: gcc -o conftest -g -O2   conftest.c -lm  >&5
-/tmp/ccEom1Qm.o: In function `main':
+/tmp/ccljMp1C.o: In function `main':
 /home/wh1/workspace/ns-2.35-with-anthocnet/ns-2.35/conftest.c:83: undefined reference to `fesetprecision'
 collect2: error: ld returned 1 exit status
 configure:7959: $? = 1
@@ -1888,7 +1888,7 @@ configure:8897: $? = 0
 configure:8901: result: found
 configure:8915: checking for addr2ascii
 configure:8915: gcc -o conftest -g -O2   -Wl,-export-dynamic conftest.c -lm  >&5
-/tmp/cc1nCSbU.o: In function `main':
+/tmp/cc07ykDf.o: In function `main':
 /home/wh1/workspace/ns-2.35-with-anthocnet/ns-2.35/conftest.c:94: undefined reference to `addr2ascii'
 collect2: error: ld returned 1 exit status
 configure:8915: $? = 1

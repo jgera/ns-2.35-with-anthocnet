@@ -11,17 +11,17 @@ set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set val(ifqlen)         50                         ;# max packet in ifq
 set val(nn)             7                          ;# number of mobilenodes
-set val(rp)             AntHocNet                  ;# routing protocol
+set val(rp)             AODV                  ;# routing protocol
 set val(x)              500   			   ;# X dimension of topography
-set val(y)              400   			   ;# Y dimension of topography  
+set val(y)              400   			   ;# Y dimension of topography
 set val(stop)		450			   ;# time of simulation end
 set opt(energymodel)    EnergyModel     	   ;# Energy mode on
 set opt(initialenergy)  10000            	   ;# Initial energy in Joules
 
 set ns		  [new Simulator]
 set tracefd       [open simple-ant.tr w]
-set windowVsTime2 [open win-simple-ant.tr w] 
-set namtrace      [open simple-wrls.nam w]    
+set windowVsTime2 [open win-simple-ant.tr w]
+set namtrace      [open simple-wrls.nam w]
 
 $ns trace-all $tracefd
 $ns namtrace-all-wireless $namtrace $val(x) $val(y)
@@ -33,8 +33,11 @@ $topo load_flatgrid $val(x) $val(y)
 
 set god_ [create-god $val(nn)]
 
+set chan_1_ [new $val(chan)]
+set chan_2_ [new $val(chan)]
+
 #
-#  Create nn mobilenodes [$val(nn)] and attach them to the channel. 
+#  Create nn mobilenodes [$val(nn)] and attach them to the channel.
 #
 
 # configure the nodes
@@ -46,7 +49,6 @@ $ns node-config -adhocRouting $val(rp) \
 		 -antType $val(ant) \
 		 -propType $val(prop) \
 		 -phyType $val(netif) \
-		 -channelType $val(chan) \
 		 -topoInstance $topo \
 		 -agentTrace ON \
 		 -routerTrace ON \
@@ -59,8 +61,9 @@ $ns node-config -adhocRouting $val(rp) \
   		 -transitionPower 0.2 \
   		 -transitionTime 0.005 \
 		 -initialEnergy $opt(initialenergy) \
-		 -movementTrace ON
-		 
+		 -movementTrace ON \
+	     -channel $chan_1_
+
 for {set i 0} {$i < $val(nn) } { incr i } {
 	set node_($i) [$ns node]
 	$god_ new_node $node_($i)
@@ -102,13 +105,13 @@ $ns at 80.0 "$node_(6) on"
 # Generation of movements
 $ns at 10.0 "$node_(0) setdest 250.0 250.0 3.0"
 $ns at 15.0 "$node_(1) setdest 45.0 285.0 5.0"
-$ns at 100.0 "$node_(0) setdest 1480.0 300.0 5.0" 
-$ns at 110.0 "$node_(6) setdest 1480.0 150.0 5.0" 
-$ns at 100.0 "$node_(1) setdest 1480.0 1.0 5.0" 
+$ns at 100.0 "$node_(0) setdest 1480.0 300.0 5.0"
+$ns at 110.0 "$node_(6) setdest 1480.0 150.0 5.0"
+$ns at 100.0 "$node_(1) setdest 1480.0 1.0 5.0"
 $ns at 10.0 "$node_(5) setdest 85.0 285.0 5.0"
 $ns at 60.0 "$node_(3) setdest 5.0 285.0 5.0"
 $ns at 105.0 "$node_(5) setdest 480.0 350 5.0"
-$ns at 100.0 "$node_(1) setdest 1480.0 150.0 5.0" 
+$ns at 100.0 "$node_(1) setdest 1480.0 150.0 5.0"
 
 set val(x)              1500   			   ;# X dimension of topography
 
@@ -124,7 +127,7 @@ $ns attach-agent $node_(1) $sink
 $ns connect $tcp $sink
 set ftp [new Application/FTP]
 $ftp attach-agent $tcp
-$ns at 10.0 "$ftp start" 
+$ns at 10.0 "$ftp start"
 
 # Printing the window size
 proc plotWindow {tcpSource file} {
@@ -134,7 +137,7 @@ set now [$ns now]
 set cwnd [$tcpSource set cwnd_]
 puts $file "$now $cwnd"
 $ns at [expr $now+$time] "plotWindow $tcpSource $file" }
-$ns at 10.1 "plotWindow $tcp $windowVsTime2"  
+$ns at 10.1 "plotWindow $tcp $windowVsTime2"
 
 # Define node initial position in nam
 for {set i 0} {$i < $val(nn)} { incr i } {
@@ -147,7 +150,7 @@ for {set i 0} {$i < $val(nn) } { incr i } {
     $ns at $val(stop) "$node_($i) reset";
 }
 
-# ending nam and the simulation 
+# ending nam and the simulation
 $ns at $val(stop) "$ns nam-end-wireless $val(stop)"
 $ns at $val(stop) "stop"
 $ns at 450.01 "puts \"end simulation\" ; $ns halt"
@@ -159,5 +162,3 @@ proc stop {} {
 }
 
 $ns run
-
-
