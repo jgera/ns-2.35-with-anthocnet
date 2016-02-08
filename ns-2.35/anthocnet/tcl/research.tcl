@@ -8,7 +8,7 @@ set val(ifq)            Queue/DropTail/PriQueue    ;# interface queue type
 set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set val(ifqlen)         50                         ;# max packet in ifq
-set val(nn)             10                         ;# number of mobilenodes
+set val(nn)             100                        ;# number of mobilenodes
 set val(rp)             AntHocNet                  ;# routing protocol
 set val(v)              30.0		               ;# velocity
 set val(x)				1500
