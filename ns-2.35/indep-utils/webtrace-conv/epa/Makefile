@@ -52,7 +52,7 @@ MKDEP	= ../../../conf/mkdep
 INCLUDE = -I. -I/home/wh1/workspace/ns-2.35-with-anthocnet/tclcl-1.20 -I/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/usr/include/pcap
 CFLAGS = -O2 -Wall -Wno-write-strings -DCPP_NAMESPACE=std
 LDFLAGS = 
-LIBS = -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltcl8.5  -lnsl -lpcap -ldl -lm 
+LIBS = -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltcl8.5  -lnsl -ldl -lm 
 INSTALL = /usr/bin/install -c
 
 SRC = tr-stat.cc

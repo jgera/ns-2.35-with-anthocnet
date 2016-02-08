@@ -78,7 +78,7 @@ INCLUDES = \
 LIB	= \
 	-L/home/wh1/workspace/ns-2.35-with-anthocnet/tclcl-1.20 -ltclcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -lotcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltk8.5 -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltcl8.5 \
 	-lXext -lX11 \
-	 -lnsl -lpcap -ldl \
+	 -lnsl -ldl \
 	-lm -lm 
 #	-L${exec_prefix}/lib \
 
@@ -396,7 +396,7 @@ SUBDIRS=\
 	indep-utils/webtrace-conv/nlanr \
 	indep-utils/webtrace-conv/ucb
 
-BUILD_NSE = nse
+BUILD_NSE = 
 
 all: $(NS) $(BUILD_NSE) $(NSTK) all-recursive Makefile
 

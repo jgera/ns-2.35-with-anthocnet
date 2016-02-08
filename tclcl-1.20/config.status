@@ -547,11 +547,11 @@ S["V_LIB_OTCL"]="-L/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -lotcl"
 S["V_LIB_TCLCL"]=""
 S["V_TAR_TARGET"]="linux-gnu"
 S["V_STATIC"]=""
-S["V_DEFINES"]="-DHAVE_ZLIB_H -DHAVE_LIBOTCL1_14 -DHAVE_OTCL_H -DHAVE_LIBTK8_5 -DHAVE_TK_H -DHAVE_LIBTCL8_5 -DHAVE_TCLINT_H -DHAVE_TCL_H "
-S["V_LIBS"]="-L/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -lotcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltk8.5 -L/home/wh1/workspace/ns-2.35"\
-"-with-anthocnet/lib -ltcl8.5"
-S["V_INCLUDES"]="-I/usr/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-"\
-"2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include"
+S["V_DEFINES"]="-DHAVE_LIBZ1_1_3 -DHAVE_ZLIB_H -DHAVE_LIBOTCL1_14 -DHAVE_OTCL_H -DHAVE_LIBTK8_5 -DHAVE_TK_H -DHAVE_LIBTCL8_5 -DHAVE_TCLINT_H -DHAVE_TCL_H "
+S["V_LIBS"]="-L/usr/local/lib -lz -L/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -lotcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltk8.5 -L/home/"\
+"wh1/workspace/ns-2.35-with-anthocnet/lib -ltcl8.5"
+S["V_INCLUDES"]="-I/usr/local/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspa"\
+"ce/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include"
 S["V_LIB_X11"]="-lXext -lX11"
 S["V_INCLUDE_X11"]=""
 S["V_LIBRARY_TK"]="../lib/tk8.5"
@@ -695,6 +695,7 @@ D["HAVE_LIBTK8_5"]=" 1"
 D["HAVE_OTCL_H"]=" 1"
 D["HAVE_LIBOTCL1_14"]=" 1"
 D["HAVE_ZLIB_H"]=" 1"
+D["HAVE_LIBZ1_1_3"]=" 1"
   for (key in D) D_is_set[key] = 1
   FS = ""
 }
