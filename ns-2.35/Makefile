@@ -64,7 +64,7 @@ DEFINE	= -DTCP_DELAY_BIND_ALL -DNO_TK -DTCLCL_CLASSINSTVAR  -DNDEBUG -DLINUX_TCP
 INCLUDES = \
 	-I.  \
 	-I. \
-	-I/home/wh1/workspace/ns-2.35-with-anthocnet/tclcl-1.20 -I/home/wh1/workspace/ns-2.35-with-anthocnet/otcl -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/usr/include/pcap \
+	-I/home/wh1/workspace/ns-2.35-with-anthocnet/tclcl-1.20 -I/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/usr/include/pcap \
 	-I./tcp -I./sctp -I./common -I./link -I./queue \
 	-I./adc -I./apps -I./mac -I./mobile -I./trace \
 	-I./routing -I./tools -I./classifier -I./mcast \
@@ -76,9 +76,9 @@ INCLUDES = \
 
 
 LIB	= \
-	-L/home/wh1/workspace/ns-2.35-with-anthocnet/tclcl-1.20 -ltclcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/otcl -lotcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltk8.5 -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltcl8.5 \
+	-L/home/wh1/workspace/ns-2.35-with-anthocnet/tclcl-1.20 -ltclcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -lotcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltk8.5 -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltcl8.5 \
 	-lXext -lX11 \
-	 -lnsl -ldl \
+	 -lnsl -lpcap -ldl \
 	-lm -lm 
 #	-L${exec_prefix}/lib \
 
@@ -396,7 +396,7 @@ SUBDIRS=\
 	indep-utils/webtrace-conv/nlanr \
 	indep-utils/webtrace-conv/ucb
 
-BUILD_NSE = 
+BUILD_NSE = nse
 
 all: $(NS) $(BUILD_NSE) $(NSTK) all-recursive Makefile
 

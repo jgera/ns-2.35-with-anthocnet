@@ -12,9 +12,9 @@ set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set val(ifqlen)         50                         ;# max packet in ifq
 set val(nn)             300                        ;# number of mobilenodes
 set val(rp)             AntHocNet                  ;# routing protocol
-set val(x)              1500   			   ;# X dimension of topography
-set val(y)              1400   			   ;# Y dimension of topography
-set val(stop)		150			   ;# time of simulation end
+set val(x)              1500   			           ;# X dimension of topography
+set val(y)              1400   			           ;# Y dimension of topography
+set val(stop)		    150			               ;# time of simulation end
 
 set ns		  [new Simulator]
 set tracefd       [open complex-ant.tr w]
@@ -39,24 +39,24 @@ set chan_2_ [new $val(chan)]
 #
 
 # configure the nodes
-        $ns node-config -adhocRouting $val(rp) \
-			 -llType $val(ll) \
-			 -macType $val(mac) \
-			 -ifqType $val(ifq) \
-			 -ifqLen $val(ifqlen) \
-			 -antType $val(ant) \
-			 -propType $val(prop) \
-			 -phyType $val(netif) \
-			 -topoInstance $topo \
-			 -agentTrace ON \
-			 -routerTrace ON \
-			 -macTrace OFF \
-			 -movementTrace ON \
-	         -channel $chan_1_
+$ns node-config -adhocRouting $val(rp) \
+	-llType $val(ll) \
+	-macType $val(mac) \
+	-ifqType $val(ifq) \
+	-ifqLen $val(ifqlen) \
+	-antType $val(ant) \
+	-propType $val(prop) \
+	-phyType $val(netif) \
+	-topoInstance $topo \
+	-agentTrace ON \
+	-routerTrace ON \
+	-macTrace OFF \
+	-movementTrace ON \
+	-channel $chan_1_
 
-	for {set i 0} {$i < $val(nn) } { incr i } {
-		set node_($i) [$ns node]
-	}
+for {set i 0} {$i < $val(nn) } { incr i } {
+	set node_($i) [$ns node]
+}
 
 # Provide initial location of mobilenodes
 for {set i 0} {$i < $val(nn) } { incr i } {
@@ -98,18 +98,18 @@ $ns at 10.0 "$ftp start"
 
 # Printing the window size
 proc plotWindow {tcpSource file} {
-global ns
-set time 0.01
-set now [$ns now]
-set cwnd [$tcpSource set cwnd_]
-puts $file "$now $cwnd"
-$ns at [expr $now+$time] "plotWindow $tcpSource $file" }
+	global ns
+	set time 0.01
+	set now [$ns now]
+	set cwnd [$tcpSource set cwnd_]
+	puts $file "$now $cwnd"
+	$ns at [expr $now+$time] "plotWindow $tcpSource $file" }
 $ns at 10.1 "plotWindow $tcp $windowVsTime2"
 
 # Define node initial position in nam
 for {set i 0} {$i < $val(nn)} { incr i } {
-# 30 defines the node size for nam
-$ns initial_node_pos $node_($i) 30
+	# 30 defines the node size for nam
+	$ns initial_node_pos $node_($i) 30
 }
 
 # Telling nodes when the simulation ends
@@ -123,7 +123,7 @@ $ns at $val(stop) "stop"
 $ns at 150.01 "puts \"end simulation\" ; $ns halt"
 proc stop {} {
     global ns tracefd namtrace
-    $ns flush-trace
+#    $ns flush-trace
     close $tracefd
     close $namtrace
 }

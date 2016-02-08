@@ -58,13 +58,13 @@ STATIC	=
 LDFLAGS	= $(STATIC)
 LDOUT	= -o $(BLANK)
 
-DEFINE	= -DNO_TK  -DNDEBUG -DUSE_SHM -DHAVE_UNISTD_H=1 -DHAVE_LIBZ1_1_3 -DHAVE_ZLIB_H -DHAVE_LIBOTCL1_14 -DHAVE_OTCL_H -DHAVE_LIBTK8_5 -DHAVE_TK_H -DHAVE_LIBTCL8_5 -DHAVE_TCLINT_H -DHAVE_TCL_H  -DHAVE_CONFIG_H
+DEFINE	= -DNO_TK  -DNDEBUG -DUSE_SHM -DHAVE_UNISTD_H=1 -DHAVE_ZLIB_H -DHAVE_LIBOTCL1_14 -DHAVE_OTCL_H -DHAVE_LIBTK8_5 -DHAVE_TK_H -DHAVE_LIBTCL8_5 -DHAVE_TCLINT_H -DHAVE_TCL_H  -DHAVE_CONFIG_H
 
 INCLUDES = \
-	-I. -I/usr/local/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include
+	-I. -I/usr/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include -I/home/wh1/workspace/ns-2.35-with-anthocnet/include
 
 LIB	= \
-	-L/usr/local/lib -lz -L/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -lotcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltk8.5 -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltcl8.5
+	-L/home/wh1/workspace/ns-2.35-with-anthocnet/otcl-1.14 -lotcl -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltk8.5 -L/home/wh1/workspace/ns-2.35-with-anthocnet/lib -ltcl8.5
 
 CFLAGS	= $(CCOPT) $(DEFINE)
 

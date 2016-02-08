@@ -2,7 +2,7 @@
 /*
  * Copyright (c) 1997 Regents of the University of California.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -18,7 +18,7 @@
  * 4. Neither the name of the University nor of the Research Group may be
  *    used to endorse or promote products derived from this software without
  *    specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -54,8 +54,8 @@ public:
 } eventtrace_class;
 
 
-BaseTrace::BaseTrace() 
-  : channel_(0), namChan_(0), tagged_(0) 
+BaseTrace::BaseTrace()
+  : channel_(0), namChan_(0), tagged_(0)
 {
   wrk_ = new char[1026];
   nwrk_ = new char[256];
@@ -97,7 +97,7 @@ void BaseTrace::namdump()
 	int n = 0;
 
 	/* Otherwise nwrk_ isn't initialized */
-	if (namChan_ != 0)
+	if (nwrk_ != 0)
 		n = strlen(nwrk_);
 	if ((n > 0) && (namChan_ != 0)) {
 		/*
@@ -128,7 +128,7 @@ int BaseTrace::command(int argc, const char*const* argv)
 			return (TCL_OK);
 		}
 		if (strcmp(argv[1], "flush") == 0) {
-			if (channel_ != 0) 
+			if (channel_ != 0)
 				Tcl_Flush(channel_);
 			if (namChan_ != 0)
 				Tcl_Flush(namChan_);
@@ -180,5 +180,3 @@ void EventTrace::trace()
   dump();
   namdump();
 }
-
-
