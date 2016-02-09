@@ -23,6 +23,7 @@
 # dst      : the flow destination node identifier (an integer from 0
 #             on, which is automatically defined by ns when the node
 #             is created: the first node is 0, the second 1 and so on)
+# awk -v flow="cbr" -v src="0" -v dst="1" -v simtime="30"  -f ./throughput.awk low-ant.tr
 BEGIN {
 	recv = 0
 }
@@ -32,11 +33,13 @@ BEGIN {
 	if ($2 != "-t") {
 		event = $1
 		time = $2
-		if (event == "+" || event == "-") node_id = $3
-		if (event == "r" || event == "d") node_id = $4
-		flow_id = $8
-		pkt_id = $12
-		pkt_size = $6
+		if (event == "+" || event == "-") node_id = 0+$14
+		if (event == "r" || event == "d") node_id = 0+$15
+		flow_id = $7
+		pkt_id = $6
+		from_id = $14
+		to_id = $15
+		pkt_size = $8
 	}
 	# Trace line format: new
 	if ($2 == "-t") {
@@ -49,23 +52,23 @@ BEGIN {
 	}
 
 	# Calculate total received packets' size
-	if (flow_id == flow && event == "r" && node_id == dst) {
-		if (flow_t != "sctp") {
-			recv += pkt_size - hdr_size
-			#printf("recv[%g] = %g --> tot: %g\n",node_id,pkt_size-hdr_size,recv)
-		} else {
-			# Rip off SCTP header, whose size depends
-			# on the number of chunks in each packet
-			if (pkt_size == 40) pkt_size = 0
-			if (pkt_size == 448) pkt_size = 400
-			if (pkt_size == 864) pkt_size = 800
-			if (pkt_size == 1280) pkt_size = 1200
+	if (flow_id == flow && event == "r") {
+		# if (flow_t != "sctp") {
 			recv += pkt_size
 			#printf("recv[%g] = %g --> tot: %g\n",node_id,pkt_size,recv)
-		}
+		# } else {
+		# 	# Rip off SCTP header, whose size depends
+		# 	# on the number of chunks in each packet
+		# 	if (pkt_size == 40) pkt_size = 0
+		# 	if (pkt_size == 448) pkt_size = 400
+		# 	if (pkt_size == 864) pkt_size = 800
+		# 	if (pkt_size == 1280) pkt_size = 1200
+		# 	recv += pkt_size
+		# 	#printf("recv[%g] = %g --> tot: %g\n",node_id,pkt_size,recv)
+		# }
 	}
 }
 
 END {
-	printf("%10g %10s %10g\n",flow,flow_t,(recv/simtime)*(8/1000))
+	printf("%10s %10g\n",flow,(recv/simtime)*(8/1000))
 }

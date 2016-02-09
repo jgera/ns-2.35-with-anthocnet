@@ -3,7 +3,7 @@
 # src     : the flow source node identifier (see above)
 # dst     : the flow destination node identifier (see above)
 
-#awk -v flow_id="47" -v src="0" -v dst="0"  -f ./delay.awk low-ant.tr
+#awk -v flow="210" -v src="0" -v dst="0"  -f ./delay.awk low-ant.tr
 BEGIN {
 	for (i in send) {
 		send[i] = 0
@@ -19,29 +19,32 @@ BEGIN {
 	if ($2 != "-t") {
 		event = $1
 		time = $2
-		if (event == "+" || event == "-") node_id = $3
-		if (event == "r" || event == "d") node_id = $4
-		flow_id = $8
-		pkt_id = $12
+		if (event == "+" || event == "-") node_id = 0+$14
+		if (event == "r" || event == "d") node_id = 0+$15
+		flow_id = $7
+		pkt_id = $6
+		from_id = $14
+		to_id = $15
 	}
+
 	# Trace line format: new
 	if ($2 == "-t") {
 		event = $1
 		time = $3
-		node_id = $5
+		node_id = $14
 		flow_id = $39
 		pkt_id = $41
 	}
 
 	# Store packets send time
-	if (flow_id == flow && node_id == src && send[pkt_id] == 0 && (event == "+" || event == "s")) {
+	if (flow_id == flow && send[pkt_id] == 0 && (event == "+" || event == "s")) {
 		send[pkt_id] = time
-		printf("send[%g] = %g\n",pkt_id,time)
+		#printf("send[%g] = %g\n",pkt_id,time)
 	}
 	# Store packets arrival time
-	if (flow_id == flow && node_id == dst && event == "r") {
+	if (flow_id == flow &&  event == "r") {
 		recv[pkt_id] = time
-		printf("\t\trecv[%g] = %g --> delay[%g] = %g\n",pkt_id,time,pkt_id,recv[pkt_id]-send[pkt_id])
+		#printf("\t\trecv[%g] = %g --> delay[%g] = %g\n",pkt_id,time,pkt_id,recv[pkt_id]-send[pkt_id])
 	}
 }
 
@@ -55,7 +58,7 @@ END {
 		num ++
 	}
 
-	printf("%10g ",flow)
+	printf("%10s ",flow)
 	if (num != 0) {
 		avg_delay = delay / num
 	} else {

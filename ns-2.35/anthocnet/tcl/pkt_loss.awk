@@ -11,14 +11,17 @@ BEGIN {
 }
 
 {
+
 	# Trace line format: normal
 	if ($2 != "-t") {
 		event = $1
 		time = $2
-		if (event == "+" || event == "-") node_id = $3
-		if (event == "r" || event == "d") node_id = $4
-		flow_id = $8
-		pkt_id = $12
+		if (event == "+" || event == "-") node_id = 0+$14
+		if (event == "r" || event == "d") node_id = 0+$15
+		flow_id = $7
+		pkt_id = $6
+		from_id = $14
+		to_id = $15
 	}
 	# Trace line format: new
 	if ($2 == "-t") {
@@ -30,19 +33,19 @@ BEGIN {
 	}
 
 	# Store packets send time
-	if (flow_id == flow && node_id == src && send[pkt_id] == 0 && (event == "+" || event == "s")) {
+	if (flow_id == flow && send[pkt_id] == 0 && (event == "+" || event == "s")) {
 		send[pkt_id] = 1
 		#printf("send[%g] = 1\n",pkt_id)
 	}
 	# Store packets arrival time
-	if (flow_id == flow && node_id == dst && event == "r") {
+	if (flow_id == flow && event == "r") {
 		recv[pkt_id] = 1
 		#printf("\t\trecv[%g] = 1\n",pkt_id)
 	}
 }
 
 END {
-	printf("%10g ",flow)
+	printf("%10s ",flow)
 	for (i in send) {
 		if (send[i] == 1) {
 			tx ++

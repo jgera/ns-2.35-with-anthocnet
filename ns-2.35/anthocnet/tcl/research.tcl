@@ -8,12 +8,12 @@ set val(ifq)            Queue/DropTail/PriQueue    ;# interface queue type
 set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set val(ifqlen)         50                         ;# max packet in ifq
-set val(nn)             100                        ;# number of mobilenodes
+set val(nn)             10                        ;# number of mobilenodes
 set val(rp)             AntHocNet                  ;# routing protocol
 set val(v)              30.0		               ;# velocity
 set val(x)				1500
 set val(y)				1500
-set val(stop)			100.0
+set val(stop)			1000.0
 
 
 # Initialize Global Variables	/Inicjowanie zmiennych globalnych
@@ -40,7 +40,6 @@ set god_ [create-god $val(nn)]
 # Create channel #1 and #2	/Tworzenie kanału 1 i 2
 set chan_1_ [new $val(chan)]
 set chan_2_ [new $val(chan)]
-
 
 # Create node(0) "attached" to channel #1	/Tworzenie wezla node(0) "dolaczonego" do kanalu 1
 
@@ -95,18 +94,25 @@ for {set j 0} {$j < $val(nn) } { incr j } {
 # Setup traffic flow between nodes			/Ustawienia ruchu między węzłami
 # UDP connections between node_(0) and node_(1)		/Polaczenie TCP pomiedzy wezlami node_(0) i node_(1)
 
-set tcp [new Agent/TCP]
-$tcp set class_ 2
-set sink [new Agent/TCPSink]
-$ns_ attach-agent $node_(0) $tcp
-$ns_ attach-agent $node_(1) $sink
-$ns_ connect $tcp $sink
-set ftp [new Application/FTP]
-$ftp attach-agent $tcp
-$ns_ at 3.0 "$ftp start"
+Agent/UDP set packetSize_ 1000
+
+for {set i 0} {[expr {$i * 2}] < $val(nn) } { incr i } {
+	set udps($i) [new Agent/UDP]
+	$ns_ attach-agent $node_([expr {$i * 2}]) $udps($i)
+	set cbrs($i) [new Application/Traffic/CBR]
+	$cbrs($i) attach-agent $udps($i)
+	$cbrs($i) set packetSize_ 512
+}
+
+for {set i 0} {[expr {$i * 2 + 1}] < $val(nn) } { incr i } {
+	set nulls($i) [new Agent/Null]
+	$ns_ attach-agent $node_([expr {$i * 2 + 1}]) $nulls($i)
+	$ns_ connect $udps($i) $nulls($i)
+	$ns_ at 1.0 "$cbrs($i) start"
+}
 
 #
-# Tell nodes when the simulation ends			/Powiedz węzłom gdy symulacja sie kończy
+# Tell nodes when the simulation ends
 #
 for {set i 0} {$i < $val(nn) } {incr i} {
     $ns_ at $val(stop) "$node_($i) reset";
