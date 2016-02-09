@@ -13,7 +13,7 @@ set val(rp)             AntHocNet                  ;# routing protocol
 set val(v)              30.0		               ;# velocity
 set val(x)				1500
 set val(y)				1500
-set val(stop)			1000.0
+set val(stop)			30.0
 
 
 # Initialize Global Variables	/Inicjowanie zmiennych globalnych
@@ -102,6 +102,7 @@ for {set i 0} {[expr {$i * 2}] < $val(nn) } { incr i } {
 	set cbrs($i) [new Application/Traffic/CBR]
 	$cbrs($i) attach-agent $udps($i)
 	$cbrs($i) set packetSize_ 512
+	$cbrs($i) set interval_ 0.01
 }
 
 for {set i 0} {[expr {$i * 2 + 1}] < $val(nn) } { incr i } {
@@ -109,6 +110,7 @@ for {set i 0} {[expr {$i * 2 + 1}] < $val(nn) } { incr i } {
 	$ns_ attach-agent $node_([expr {$i * 2 + 1}]) $nulls($i)
 	$ns_ connect $udps($i) $nulls($i)
 	$ns_ at 1.0 "$cbrs($i) start"
+	$ns_ at $val(stop) "$cbrs($i) stop"
 }
 
 #
